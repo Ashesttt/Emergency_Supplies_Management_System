@@ -25,7 +25,7 @@ public class TokenUtils {
     @Resource
     private IUserService userService;
 
-    @PostConstruct
+    @PostConstruct//通过@PostConstruct实现初始化bean之前进行的操作
     public void setUserService() {
         staticUserService = userService;
     }
@@ -33,7 +33,7 @@ public class TokenUtils {
     /**
      * 生成token
      *
-     * @return
+     * @return token
      */
     public static String genToken(String userId, String sign) {
         return JWT.create().withAudience(userId) // 将 user id 保存到 token 里面,作为载荷
@@ -45,12 +45,13 @@ public class TokenUtils {
      * 获取当前登录的用户信息
      *
      * @return user对象
+     * 可在UserController.java中的方法中调用
      */
     public static User getCurrentUser() {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String token = request.getHeader("token");
-            if (StrUtil.isNotBlank(token)) {
+            if (StrUtil.isNotBlank(token)) {//token不为空
                 String userId = JWT.decode(token).getAudience().get(0);
                 return staticUserService.getById(Integer.valueOf(userId));
             }

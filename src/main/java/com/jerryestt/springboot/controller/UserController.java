@@ -14,6 +14,7 @@ import com.jerryestt.springboot.controller.dto.UserDTO;
 import com.jerryestt.springboot.entity.Role;
 import com.jerryestt.springboot.entity.User;
 import com.jerryestt.springboot.service.IUserService;
+import com.jerryestt.springboot.utils.TokenUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -139,6 +140,12 @@ public class UserController {
         if (!"".equals(createTime)) {
             queryWrapper.apply("DATE_FORMAT(create_time, '%Y-%m-%d %H:%i:%s') LIKE {0}", "%" + createTime + "%");
         }
+        
+        
+        
+//        User currentUser = TokenUtils.getCurrentUser();
+//        System.out.println(currentUser);
+//        System.out.println(currentUser.getUsername());
         return Result.success(userService.page(page, queryWrapper));
     }
 
