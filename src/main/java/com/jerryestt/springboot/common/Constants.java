@@ -14,7 +14,6 @@ public interface Constants {
     String INCORRECT_USERNAME_OR_PASSWORD = "10001";// 用户名或密码错误
     String USERNAME_OR_PASSWORD_CANNOT_BE_EMPTY = "10002";// 用户名或密码不能为空
     String USERNAME_ALREADY_EXISTS = "10003";// 用户名已存在
-    String DATA_NOT_FOUND = "10004";// 数据未找到
-
+    String USER_NOT_FOUND = "10004";// 用户未找到
 }
 

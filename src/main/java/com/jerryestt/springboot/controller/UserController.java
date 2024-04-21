@@ -240,7 +240,8 @@ public class UserController {
         if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {// 如果用户名或密码为空
             return Result.error(Constants.USERNAME_OR_PASSWORD_CANNOT_BE_EMPTY, "用户名或密码不能为空");
         }
-        return Result.success(userService.login(userDTO));
+        UserDTO user = userService.login(userDTO);
+        return Result.success(user);
     }
 
 

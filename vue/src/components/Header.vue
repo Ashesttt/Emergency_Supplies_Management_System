@@ -9,10 +9,9 @@
       </el-breadcrumb>
 
     </div>
-    <el-dropdown style="width: 70px; cursor: pointer">
+    <el-dropdown style="width: auto; cursor: pointer">
       <span>{{ user_info.username }}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
-      <el-dropdown-menu slot="dropdown">
-        <!-- TODO:下拉菜单太丑了，优化一下-->
+      <el-dropdown-menu slot="dropdown" style="width: 100px; text-align: center">
         <el-dropdown-item style="font-size: 14px; padding: 5px 0">
           <!--          <el-link :to="'/person/' + user_info.userId" style="text-decoration: none">个人信息</el-link>-->
           <router-link to="/person" style="text-decoration: none">个人信息</router-link>

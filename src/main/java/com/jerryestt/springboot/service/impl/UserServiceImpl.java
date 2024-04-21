@@ -10,6 +10,7 @@ import com.jerryestt.springboot.entity.User;
 import com.jerryestt.springboot.exception.ServiceException;
 import com.jerryestt.springboot.mapper.UserMapper;
 import com.jerryestt.springboot.service.IUserService;
+import com.jerryestt.springboot.utils.TokenUtils;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,6 +23,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         User one = getUserInfo(userDTO);
         if (one != null) {// 查询成功
             BeanUtil.copyProperties(one, userDTO, true);
+            // 设置token
+            String token = TokenUtils.genToken(one.getUserId().toString(), one.getPassword());
+            userDTO.setToken(token);
             return userDTO;
         } else {// 登录失败
             throw new ServiceException(Constants.INCORRECT_USERNAME_OR_PASSWORD, "用户名或密码错误");

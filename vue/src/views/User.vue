@@ -128,6 +128,7 @@ export default {
   data() {
     return {
       tableData: [],
+      code: "",
       total: 0,
       pageNum: 1,
       pageSize: 10,
@@ -174,6 +175,9 @@ export default {
         }
       }).then(res => {
         console.log(res)
+        // if (res.code !== "200") {
+        //   this.$message.error(res.msg)
+        // }
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
