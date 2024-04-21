@@ -6,6 +6,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/ global.css';
 // import '../src/assets/ global.css';
 import request from '@/utils/request'
+import store from "@/store";
 
 
 Vue.config.productionTip = false
@@ -16,5 +17,6 @@ Vue.prototype.request = request
 
 new Vue({
     router,
+    store,
     render: h => h(App)
 }).$mount('#app')
