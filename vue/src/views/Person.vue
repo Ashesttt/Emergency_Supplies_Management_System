@@ -14,7 +14,7 @@
           <i v-else class="el-icon-plus avatar-uploader-icon"></i>
         </el-upload>
         <el-form-item label="用户名">
-          <el-input v-model="form.username" autocomplete="off"></el-input>
+          <el-input v-model="form.username" autocomplete="off" disabled></el-input>
         </el-form-item>
         <!--TODO: 输入用户身份变成选择用户身份        -->
         <el-form-item label="用户身份">

@@ -48,17 +48,21 @@
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="userId" label="用户ID" width="100">
       </el-table-column>
-      <el-table-column prop="avatarurl" label="头像">
+      <el-table-column prop="avatarurl" label="头像" width="100">
         <template slot-scope="scope">
-          <el-image
-              style="width: 50px; height: 50px; border-radius:50%; margin-right: 20px; align-self: center;"
-              :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
-              :preview-src-list="[scope.row.avatarurl]"
-              fit="cover"
-          ></el-image>
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <el-image
+                style="width: 50px; height: 50px; border-radius:50%;"
+                :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
+                :preview-src-list="[scope.row.avatarurl]"
+                fit="cover"
+            ></el-image>
+          </div>
         </template>
       </el-table-column>
       <el-table-column prop="username" label="用户名" width="140">
+      </el-table-column>
+      <el-table-column prop="password" label="密码" width="140">
       </el-table-column>
       <el-table-column prop="role" label="用户身份" width="120">
       </el-table-column>

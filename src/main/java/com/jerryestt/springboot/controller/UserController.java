@@ -22,6 +22,8 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -224,9 +226,13 @@ public class UserController {
             String createTime = row.get(7).toString();
             if (createTime.isEmpty()) {
                 // 如果 create_time 是空的，设置一个默认值
-                user.setCreateTime("2023-04-14 21:00:00");
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = format.parse("2023-04-14 21:00:00");
+                user.setCreateTime(date);
             } else {
-                user.setCreateTime(createTime);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date date = format.parse(createTime);
+                user.setCreateTime(date);
             }
             users.add(user);
         }

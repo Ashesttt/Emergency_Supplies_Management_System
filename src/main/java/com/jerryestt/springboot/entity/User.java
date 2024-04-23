@@ -4,12 +4,9 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
-
+import java.util.Date;
 import java.io.Serializable;
-import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
 
 
 @Data
@@ -23,13 +20,14 @@ public class User implements Serializable {
      * 库表的主键字段可能是user_id，但在Java中，按照命名规范，属性名应该是
      * userId，而不是user_id。因此，你需要将User实体类中的user_id字段名
      * 改为userId，并使用@TableField注解来指定其映射到数据库表的user_id字段。
-     * */
+     */
     @TableId(type = IdType.AUTO)
     @TableField(value = "user_id")
     private Integer userId;
     private String username;
 
-    @JsonIgnore
+    //管理员可以查看用户的密码，所以不需要加上@JsonIgnore
+    //    @JsonIgnore
     private String password;
 
     public Integer getUserId() {
@@ -88,20 +86,15 @@ public class User implements Serializable {
         this.address = address;
     }
 
-    public String getCreateTime() {
-        return createTime;
-    }
 
-    public void setCreateTime(String createTime) {
-        this.createTime = createTime;
-    }
 
     private Role role;
     private String email;
     private String phone;
     private String address;
-    
+
     @TableField(value = "create_time")
-    private String createTime;
+//    private String createTime;
+    private Date createTime;  
     private String avatarurl;
 }
