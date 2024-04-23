@@ -15,3 +15,7 @@ mybatis:
 mybatis-plus:
   configuration:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+    
+files:
+  upload:
+    path: C:\Users\70562\Desktop\awaresystem\Emergency_Material_Manage\files\

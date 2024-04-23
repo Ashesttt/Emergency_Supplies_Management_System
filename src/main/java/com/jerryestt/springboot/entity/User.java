@@ -103,4 +103,5 @@ public class User implements Serializable {
     
     @TableField(value = "create_time")
     private String createTime;
+    private String avatarurl;
 }

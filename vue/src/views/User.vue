@@ -46,7 +46,17 @@
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="userId" label="用户ID" width="100" @click="collapse">
+      <el-table-column prop="userId" label="用户ID" width="100">
+      </el-table-column>
+      <el-table-column prop="avatarurl" label="头像">
+        <template slot-scope="scope">
+          <el-image
+              style="width: 50px; height: 50px; border-radius:50%; margin-right: 20px; align-self: center;"
+              :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
+              :preview-src-list="[scope.row.avatarurl]"
+              fit="cover"
+          ></el-image>
+        </template>
       </el-table-column>
       <el-table-column prop="username" label="用户名" width="140">
       </el-table-column>
@@ -133,6 +143,7 @@ export default {
       pageNum: 1,
       pageSize: 10,
       userId: "",
+      avatarurl: "",
       username: "",
       role: "",
       email: "",
@@ -248,11 +259,11 @@ export default {
       let ids = this.multipleSelection.map(v => v.userId)  // [{}, {}, {}] => [1,2,3]
       console.log("ids:", ids)
       request.post("/user/del/batch", ids).then(res => {
-        if (res.data) {
+        if (res.code === "200") {
           this.$message.success("批量删除成功")
           this.load()
         } else {
-          this.$message.error("批量删除失败")
+          this.$message.error("批量删除失败,原因：" + res.msg)
         }
       })
     },
@@ -278,22 +289,6 @@ export default {
     handleSelectionChange(val) {
       console.log("val:", val)
       this.multipleSelection = val
-    },
-
-    /**
-     * 左边栏收缩方法
-     * */
-    collapse() {  // 点击收缩按钮触发
-      this.isCollapse = !this.isCollapse
-      if (this.isCollapse) {  // 收缩
-        this.sideWidth = 64
-        this.collapseBtnClass = 'el-icon-s-unfold'
-        this.logoTextShow = false
-      } else {   // 展开
-        this.sideWidth = 200
-        this.collapseBtnClass = 'el-icon-s-fold'
-        this.logoTextShow = true
-      }
     },
 
     /**

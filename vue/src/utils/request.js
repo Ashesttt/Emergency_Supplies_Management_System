@@ -24,7 +24,7 @@ request.interceptors.request.use(config => {
 });
 
 // response 拦截器
-// 可以在接口响应后统一处理结果
+// 可以在接口响应后统一处理结果  
 request.interceptors.response.use(
     response => {
         let res = response.data;
