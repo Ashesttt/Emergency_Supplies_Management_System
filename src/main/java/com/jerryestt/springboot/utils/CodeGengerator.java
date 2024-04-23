@@ -36,7 +36,7 @@ public class CodeGengerator {
                             .pathInfo(Collections.singletonMap(OutputFile.xml, "C:\\Users\\70562\\Desktop\\awaresystem\\Emergency_Material_Manage\\SpringBoot\\src\\main\\java\\com\\jerryestt\\springboot\\mapper\\")); // 设置mapperXml生成路径
                 })
                 .strategyConfig(builder -> {
-                    builder.addInclude("user_info") // 设置需要生成的表名
+                    builder.addInclude("role_info") // 设置需要生成的表名
                             .addTablePrefix("_info"); // 设置过滤表前缀
                 })
                 .templateEngine(new FreemarkerTemplateEngine()) // 使用Freemarker引擎模板，默认的是Velocity引擎模板

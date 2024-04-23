@@ -11,7 +11,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerryestt.springboot.common.Constants;
 import com.jerryestt.springboot.common.Result;
 import com.jerryestt.springboot.controller.dto.UserDTO;
-import com.jerryestt.springboot.entity.Role;
+import com.jerryestt.springboot.entity.User_Role;
 import com.jerryestt.springboot.entity.User;
 import com.jerryestt.springboot.service.IUserService;
 import org.springframework.web.bind.annotation.*;
@@ -214,9 +214,9 @@ public class UserController {
             String role = row.get(3).toString();
             if (role.isEmpty()) {
                 // 如果 role 是空的，设置一个默认值
-                user.setRole(Role.User);
+                user.setUserRole(User_Role.User);
             } else {
-                user.setRole(Role.valueOf(role));
+                user.setUserRole(User_Role.valueOf(role));
             }
 
             user.setEmail(row.get(4).toString());
@@ -264,7 +264,7 @@ public class UserController {
     public Result register(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
         String password = userDTO.getPassword();
-        String role = userDTO.getRole().toString();
+        String role = userDTO.getUserRole().toString();
 
         //同上Login方法的疑问
         if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {// 如果用户名或密码为空

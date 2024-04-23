@@ -12,8 +12,8 @@
 <!--            <if test="password != null">-->
 <!--                password = #{password},-->
 <!--            </if>-->
-            <if test="role != null">
-                role = #{role},
+            <if test="userRole != null">
+                userRole = #{userRole},
             </if>
             <if test="email != null">
                 email = #{email},

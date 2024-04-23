@@ -1,7 +1,7 @@
 package com.jerryestt.springboot.controller.dto;
 
 
-import com.jerryestt.springboot.entity.Role;
+import com.jerryestt.springboot.entity.User_Role;
 import lombok.Data;
 
 /**
@@ -11,7 +11,7 @@ import lombok.Data;
 public class UserDTO {
     private String username;
     private String password;
-    private Role role;
+    private User_Role userRole;
     private String avatarurl;
     private String token;
 }

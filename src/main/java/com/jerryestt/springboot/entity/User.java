@@ -21,7 +21,7 @@ public class User implements Serializable {
      * userId，而不是user_id。因此，你需要将User实体类中的user_id字段名
      * 改为userId，并使用@TableField注解来指定其映射到数据库表的user_id字段。
      */
-    @TableId(type = IdType.AUTO)
+    @TableId(type = IdType.AUTO)//指定自增策略
     @TableField(value = "user_id")
     private Integer userId;
     private String username;
@@ -54,12 +54,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public User_Role getUserRole() {
+        return userRole;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setUserRole(User_Role userRole) {
+        this.userRole = userRole;
     }
 
     public String getEmail() {
@@ -87,8 +87,8 @@ public class User implements Serializable {
     }
 
 
-
-    private Role role;
+    @TableField(value = "role")
+    private User_Role userRole;
     private String email;
     private String phone;
     private String address;
