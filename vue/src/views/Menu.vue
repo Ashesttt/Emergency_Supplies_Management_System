@@ -1,25 +1,26 @@
 <template>
   <div>
     <div style="margin-bottom: 30px">
+      是一级菜单而且没有路径的才可以新增子菜单
     </div>
 
     <div style="margin: 10px 0">
-      <el-input style="width: 200px" placeholder="请输入角色名称" suffix-icon="el-icon-search"
-                v-model="rolename"></el-input>
+      <el-input style="width: 200px" placeholder="请输入菜单名称" suffix-icon="el-icon-search"
+                v-model="menuname"></el-input>
 
-      <el-button class="ml-5" type="primary" @click="load">搜索</el-button>
+      <el-button class="ml-5" type="primary" @click="search">搜索</el-button>
       <el-button class="ml-5" type="warning" @click="reset">重置</el-button>
     </div>
 
     <div style="margin: 10px 0">
-      <el-button type="primary" @click="handleAdd">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
+      <el-button type="primary" @click="handleAdd()">新增主菜单 <i class="el-icon-circle-plus-outline"></i></el-button>
       <el-popconfirm
           class="ml-5"
           confirm-button-text='确定'
           cancel-button-text='取消'
           icon="el-icon-warning"
           icon-color="red"
-          title="您确定批量删除这些角色信息吗？"
+          title="您确定批量删除这些菜单信息吗？"
           @confirm="delBatch"
       >
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
@@ -27,29 +28,36 @@
     </div>
 
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
+              row-key="menuId" default-expand-all
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="id" label="角色ID" width="200">
+      <el-table-column prop="menuId" label="菜单ID" width="200">
       </el-table-column>
-      <el-table-column prop="rolename" label="角色名称">
+      <el-table-column prop="menuname" label="菜单名称">
+      </el-table-column>
+      <el-table-column prop="path" label="路径">
+      </el-table-column>
+      <el-table-column prop="icon" label="图标">
       </el-table-column>
       <el-table-column prop="description" label="描述">
       </el-table-column>
       <el-table-column label="操作" width="300" align="center">
         <template slot-scope="scope">
-          <el-button type="info" @click="selectMenu(scope.row.id)">分配菜单 <i class="el-icon-menu"></i></el-button>
-          <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
-          <el-popconfirm
-              class="ml-5"
-              confirm-button-text='确定'
-              cancel-button-text='取消'
-              icon="el-icon-warning"
-              icon-color="red"
-              title="您确定删除这个用户信息吗？"
-              @confirm="del(scope.row.id)"
-          >
-            <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>
-          </el-popconfirm>
+          <el-button type="primary" @click="handleAdd(scope.row.menuId)" v-if="!scope.row.pid && !scope.row.path">新增子菜单
+            <i class="el-icon-circle-plus"></i>
+          </el-button>
+            <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
+            <el-popconfirm
+                class="ml-5"
+                confirm-button-text='确定'
+                cancel-button-text='取消'
+                icon="el-icon-warning"
+                icon-color="red"
+                title="您确定删除这个菜单信息吗？"
+                @confirm="del(scope.row.menuId)"
+            >
+              <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>
+            </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -65,10 +73,16 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="角色信息" :visible.sync="dialogFormVisible" width="30%">
+    <el-dialog title="菜单信息" :visible.sync="dialogFormVisible" width="30%">
       <el-form label-width="80px" size="small">
-        <el-form-item label="角色名称">
-          <el-input v-model="form.rolename" autocomplete="off"></el-input>
+        <el-form-item label="菜单名称">
+          <el-input v-model="form.menuname" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="路径">
+          <el-input v-model="form.path" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="图标">
+          <el-input v-model="form.icon" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="form.description" autocomplete="off"></el-input>
@@ -76,24 +90,6 @@
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
-      </div>
-    </el-dialog>
-
-    <el-dialog title="菜单分配" :visible.sync="menuDialogVisible" width="30%">
-      <el-tree
-          :props="{label: 'menuname'}"
-          :data="menuData"
-          show-checkbox
-          node-key="id"
-          ref="tree"
-          :default-expanded-keys="[2]"
-          :default-checked-keys="[5]"
-          @check-change="handleCheckChange">
-      </el-tree>
-
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="menuDialogVisible = false">取 消</el-button>
         <el-button type="primary" @click="save">确 定</el-button>
       </div>
     </el-dialog>
@@ -112,12 +108,12 @@ export default {
       total: 0,
       pageNum: 1,
       pageSize: 10,
-      id: "",
-      rolename: "",
+      menuId: "",
+      menuname: "",
       description: "",
       form: {},
+      pid: null,
       dialogFormVisible: false,
-      menuDialogVisible: false,
       multipleSelection: [],
       msg: "hello mxy",
       collapseBtnClass: "el-icon-s-fold",
@@ -126,31 +122,48 @@ export default {
       logoTextShow: true, // logo文字是否显示
       headerBg: "headerBg",
       dialogVisible: false, // 弹窗可视化
-      menuData: [],
     }
   },
   created() {
     // 请求分页查询数据
     this.load()
+    request.get("/menu").then(res => {
+      console.log(res)
+      this.tableData = res.data
+    })
   },
 
 
   methods: {
     /**
-     * 查询数据方法
+     * 加载数据方法
      * */
     load() {
-      request.get("/role/page", {
+      request.get("/menu").then(res => {
+        console.log(res)
+        if (res.code !== "200") {
+          this.$message.error(res.msg)
+        }
+        this.tableData = res.data;
+      })
+    },
+    
+    /**
+     * 查询数据方法
+     * */
+    search() {
+      request.get("/menu/page", {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
-          rolename: this.rolename,
+          menuname: this.menuname,
         }
       }).then(res => {
         console.log(res)
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -162,7 +175,7 @@ export default {
     async reset() {
       try {
         await this.handle_reset();
-        this.rolename = "";
+        this.menuname = "";
         this.load();
       } catch (error) {
         // 用户点击了取消，所以不执行任何操作
@@ -187,18 +200,23 @@ export default {
     /**
      * 新增角色信息
      * */
-    handleAdd() {
+    handleAdd(pid) {
       this.dialogFormVisible = true
       this.form = {}
+      if (pid) {
+        this.form.pid = pid
+      }
+      console.log("pid:", pid)
+      console.log("form:", this.form)
     },
 
     /**
      * 批量删除
      * */
     delBatch() {
-      let ids = this.multipleSelection.map(v => v.id)  // [{}, {}, {}] => [1,2,3]
+      let ids = this.multipleSelection.map(v => v.menuId)  // [{}, {}, {}] => [1,2,3]
       console.log("ids:", ids)
-      request.post("/role/del/batch", ids).then(res => {
+      request.post("/menu/del/batch", ids).then(res => {
         if (res.code === "200") {
           this.$message.success("批量删除成功")
           this.load()
@@ -217,21 +235,6 @@ export default {
     },
 
     /**
-     * 分配菜单
-     * */
-    selectMenu(id) {
-      this.menuDialogVisible = true
-      this.form = this.tableData.find(v => v.id === id)// 根据id查找对应的数据
-      request.get("/menu").then(res => {
-        console.log(res)
-        if (res.code !== "200") {
-          this.$message.error(res.msg)
-        }
-        this.menuData = res.data;
-      })
-    },
-
-    /**
      * 编辑用户信息
      * */
     handleEdit(row) {
@@ -244,7 +247,7 @@ export default {
      * */
     del(id) {
       console.log("id:", id)
-      request.delete("/role/" + id).then(res => {
+      request.delete("/menu/" + id).then(res => {
         console.log("是否删除:", res)
         if (res.data) {
           this.$message.success("删除成功")
@@ -274,23 +277,17 @@ export default {
     },
 
     /**
-     * 加载树形菜单
-     * */
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate);
-    },
-
-    /**
      * 保存用户信息
      * */
     save() {
-      request.post("/role", this.form).then(res => {
-        if (res.data) {
-          this.$message.success("保存成功")
+      console.log("form:", this.form)
+      request.post("/menu", this.form).then(res => {
+        if (res.code === "200") {
+          this.$message.success("保存成功" + res.msg)
           this.dialogFormVisible = false
           this.load()
         } else {
-          this.$message.error("保存失败")
+          this.$message.error("保存失败" + res.msg)
         }
       })
     },

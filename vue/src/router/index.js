@@ -36,16 +36,11 @@ const routes = [
         name: '角色管理',
         component: () => import('../views/Role.vue')
       },
-      // {
-      //   path: 'role',
-      //   name: '角色管理',
-      //   component: () => import('../views/Role.vue')
-      // },
-      // {
-      //   path: 'menu',
-      //   name: '菜单管理',
-      //   component: () => import('../views/Menu.vue')
-      // },
+      {
+        path: 'menu',
+        name: '菜单管理',
+        component: () => import('../views/Menu.vue')
+      },
       // {
       //   path: 'dept',
       //   name: '部门管理',
