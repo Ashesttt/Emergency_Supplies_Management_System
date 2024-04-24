@@ -87,9 +87,12 @@
           show-checkbox
           node-key="id"
           ref="tree"
-          :default-expanded-keys="[2]"
-          :default-checked-keys="[5]"
+          :default-expanded-keys="expends"
+          :default-checked-keys="checks"
           @check-change="handleCheckChange">
+          <span class="custom-tree-node" slot-scope="{ node, data }">
+            <span><i :class="data.icon"></i>{{ data.menuname }}</span>
+          </span>
       </el-tree>
 
       <div slot="footer" class="dialog-footer">
@@ -126,7 +129,9 @@ export default {
       logoTextShow: true, // logo文字是否显示
       headerBg: "headerBg",
       dialogVisible: false, // 弹窗可视化
-      menuData: [],
+      menuData: [],// 菜单分配数据
+      expends: [],// 默认展开的节点
+      checks: [] // 默认选中的节点
     }
   },
   created() {
@@ -221,13 +226,14 @@ export default {
      * */
     selectMenu(id) {
       this.menuDialogVisible = true
-      this.form = this.tableData.find(v => v.id === id)// 根据id查找对应的数据
+      this.form = this.tableData.find(v => v.id === id)// 根据id查找对应的数据（是给角色编辑用的）
       request.get("/menu").then(res => {
         console.log(res)
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
         this.menuData = res.data;
+        this.expends = this.menuData.map(v => v.id)
       })
     },
 
@@ -284,6 +290,7 @@ export default {
      * 保存用户信息
      * */
     save() {
+      console.log("form:", this.form)
       request.post("/role", this.form).then(res => {
         if (res.data) {
           this.$message.success("保存成功")

@@ -37,7 +37,10 @@
       </el-table-column>
       <el-table-column prop="path" label="路径">
       </el-table-column>
-      <el-table-column prop="icon" label="图标">
+      <el-table-column prop="icon" label="图标" align="center">
+        <template slot-scope="scope">
+          <i :class="scope.row.icon" style="font-size: 25px "></i>
+        </template>
       </el-table-column>
       <el-table-column prop="description" label="描述">
       </el-table-column>
@@ -46,18 +49,18 @@
           <el-button type="primary" @click="handleAdd(scope.row.menuId)" v-if="!scope.row.pid && !scope.row.path">新增子菜单
             <i class="el-icon-circle-plus"></i>
           </el-button>
-            <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
-            <el-popconfirm
-                class="ml-5"
-                confirm-button-text='确定'
-                cancel-button-text='取消'
-                icon="el-icon-warning"
-                icon-color="red"
-                title="您确定删除这个菜单信息吗？"
-                @confirm="del(scope.row.menuId)"
-            >
-              <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>
-            </el-popconfirm>
+          <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
+          <el-popconfirm
+              class="ml-5"
+              confirm-button-text='确定'
+              cancel-button-text='取消'
+              icon="el-icon-warning"
+              icon-color="red"
+              title="您确定删除这个菜单信息吗？"
+              @confirm="del(scope.row.menuId)"
+          >
+            <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -82,7 +85,15 @@
           <el-input v-model="form.path" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="图标">
-          <el-input v-model="form.icon" autocomplete="off"></el-input>
+          <el-select clearable v-model="form.icon" placeholder="请选择图标" style="width: 100%">
+            <el-option
+                v-for="item in options"
+                :key="item.name"
+                :label="item.name"
+                :value="item.value">
+              <i :class="item.value"></i>{{ item.name }}
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="form.description" autocomplete="off"></el-input>
@@ -122,6 +133,7 @@ export default {
       logoTextShow: true, // logo文字是否显示
       headerBg: "headerBg",
       dialogVisible: false, // 弹窗可视化
+      options: [],
     }
   },
   created() {
@@ -147,7 +159,7 @@ export default {
         this.tableData = res.data;
       })
     },
-    
+
     /**
      * 查询数据方法
      * */
@@ -201,6 +213,7 @@ export default {
      * 新增角色信息
      * */
     handleAdd(pid) {
+      this.getIcons()
       this.dialogFormVisible = true
       this.form = {}
       if (pid) {
@@ -240,6 +253,20 @@ export default {
     handleEdit(row) {
       this.form = row
       this.dialogFormVisible = true
+      this.getIcons()
+    },
+    
+    /**
+     * 请求图标数据
+     * */
+    getIcons() {
+      request.get("/menu/icons").then(res => {
+        console.log(res)
+        if (res.code !== "200") {
+          this.$message.error(res.msg)
+        }
+        this.options = res.data;
+      })
     },
 
     /**

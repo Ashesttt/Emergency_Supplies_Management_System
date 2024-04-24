@@ -4,8 +4,11 @@ package com.jerryestt.springboot.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.jerryestt.springboot.common.Constants;
 import com.jerryestt.springboot.common.Result;
+import com.jerryestt.springboot.entity.Dict;
 import com.jerryestt.springboot.entity.Menu;
+import com.jerryestt.springboot.mapper.DictMapper;
 import com.jerryestt.springboot.service.IMenuService;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,6 +22,9 @@ public class MenuController {
 
     @Resource
     private IMenuService menuService;
+
+    @Resource
+    private DictMapper dictMapper;
 
 
     // 新增或更新
@@ -77,5 +83,12 @@ public class MenuController {
             queryWrapper.like("menuname", menuname);
         }
         return Result.success(menuService.page(page, queryWrapper));
+    }
+
+    @GetMapping("/icons")
+    public Result getIcons() {
+        QueryWrapper<Dict> QueryWrapper = new QueryWrapper<>();
+        QueryWrapper.eq("type", Constants.DICT_TYPE_ICON);
+        return Result.success(dictMapper.selectList(QueryWrapper));
     }
 }
