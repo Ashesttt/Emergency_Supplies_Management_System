@@ -37,7 +37,7 @@
       </el-table-column>
       <el-table-column label="操作" width="300" align="center">
         <template slot-scope="scope">
-          <el-button type="info" @click="selectMenu(scope.row.id)">分配菜单 <i class="el-icon-menu"></i></el-button>
+          <el-button type="info" @click="selectMenu(scope.row)">分配菜单 <i class="el-icon-menu"></i></el-button>
           <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
           <el-popconfirm
               class="ml-5"
@@ -224,8 +224,12 @@ export default {
     /**
      * 分配菜单
      * */
-    selectMenu(id) {
+    selectMenu(role) {
+      this.roleId = role.id
+      this.rolename = role.rolename
       this.menuDialogVisible = true
+      
+      // 查询菜单信息
       request.get("/menu").then(res => {
         if (res.code !== "200") {
           this.$message.error(res.msg)
@@ -237,7 +241,7 @@ export default {
       })
       
       // 根据角色id查询对应的菜单信息 默认选中
-      request.get("/role/roleMenu/" + id).then(res => {
+      request.get("/role/roleMenu/" + this.roleId).then(res => {
         if (res.code === "200") {
           this.checks = res.data
         }
@@ -314,11 +318,12 @@ export default {
      * */
     saveRoleMenu() {
       let checks = this.$refs.tree.getCheckedKeys()
-      request.post("/role/roleMenu/" + this.form.id , checks).then(res => {
+      console.log(this.tableData)
+      request.post("/role/roleMenu/" + this.roleId , checks).then(res => {
         if (res.code ==="200") {  
           this.$message.success("绑定成功")
           this.menuDialogVisible = false
-          console.log("form.id:", this.form.id)
+          console.log("form.id:", this.roleId)
           console.log("checks:", checks)
         } else {
           this.$message.error("保存失败")

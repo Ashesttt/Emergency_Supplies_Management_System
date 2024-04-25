@@ -47,18 +47,7 @@ public class MenuController {
 
     @GetMapping
     public Result findAll(@RequestParam(defaultValue = "") String menuname) {
-        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-        queryWrapper.like("menuname", menuname);
-        //查询所有数据
-        // 原理：过滤出所有的父菜单项(就是Pid=null)，并收集到一个新的列表中。
-        // 接着，对于每一个父菜单项，再次使用Stream API过滤出所有的子菜单项，并设置到父菜单的children属性中。
-        List<Menu> list = menuService.list(queryWrapper);
-        List<Menu> parentNode = list.stream().filter(menu -> menu.getPid() == null).collect(Collectors.toList());
-        for (Menu menu : parentNode) {
-            List<Menu> children = list.stream().filter(m -> menu.getMenuId().equals(m.getPid())).collect(Collectors.toList());
-            menu.setChildren(children);
-        }
-        return Result.success(parentNode);
+        return Result.success(menuService.findMenus(menuname));
     }
 
     // id查询

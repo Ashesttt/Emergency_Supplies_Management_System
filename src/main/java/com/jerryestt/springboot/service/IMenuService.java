@@ -3,6 +3,8 @@ package com.jerryestt.springboot.service;
 import com.jerryestt.springboot.entity.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
 * @author Rick SanChez
 * @description 针对表【menu_info】的数据库操作Service
@@ -10,4 +12,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
 */
 public interface IMenuService extends IService<Menu> {
 
+    List<Menu> findMenus(String menuname);
 }

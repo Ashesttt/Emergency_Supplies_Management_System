@@ -6,17 +6,34 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.jerryestt.springboot.common.Constants;
 import com.jerryestt.springboot.controller.dto.UserDTO;
+import com.jerryestt.springboot.entity.Menu;
 import com.jerryestt.springboot.entity.User;
 import com.jerryestt.springboot.exception.ServiceException;
+import com.jerryestt.springboot.mapper.RoleMapper;
+import com.jerryestt.springboot.mapper.RoleMenuMapper;
 import com.jerryestt.springboot.mapper.UserMapper;
+import com.jerryestt.springboot.service.IMenuService;
 import com.jerryestt.springboot.service.IUserService;
 import com.jerryestt.springboot.utils.TokenUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
 
     private static final Log LOG = Log.get();
+
+    @Resource//注入RoleMapper
+    private RoleMapper roleMapper;
+
+    @Resource
+    private RoleMenuMapper roleMenuMapper;
+
+    @Resource
+    private IMenuService menuService;
 
     @Override
     public UserDTO login(UserDTO userDTO) {
@@ -26,6 +43,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             // 设置token
             String token = TokenUtils.genToken(one.getUserId().toString(), one.getPassword());
             userDTO.setToken(token);
+
+            String rolename = one.getUserRole(); // 获取用户角色
+            
+            List<Menu> roleMenus = getMenusByRoleName(rolename);// 用 角色名 查询 该角色对应的菜单列表
+            userDTO.setMenus(roleMenus);// 设置用户菜单
             return userDTO;
         } else {// 登录失败
             throw new ServiceException(Constants.INCORRECT_USERNAME_OR_PASSWORD, "用户名或密码错误");
@@ -65,4 +87,29 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return one;
     }
+    
+    /**
+     * 封装 用 角色名 查询 该角色对应的菜单列表
+     * @param rolename 角色名
+     * @return List<Menu> roleMenus 菜单列表
+     * */
+    private List<Menu> getMenusByRoleName(String rolename) {
+        Integer roleId = roleMapper.selectByrolename(rolename);// 根据角色名查询角色id
+        List<Integer> menuIds = roleMenuMapper.findMenuByRoleId(roleId);// 根据角色id查询这个角色拥有的菜单id
+
+        List<Menu> menus = menuService.findMenus("");// 查询所有菜单
+
+        List<Menu> roleMenus = new ArrayList<>();// 保存角色对应的菜单
+
+        //筛选出当前用户角色对应的菜单
+        for (Menu menu : menus) {// 遍历所有菜单
+            if (menuIds.contains(menu.getMenuId())) {// 如果菜单id在当前用户角色对应的菜单id中
+                roleMenus.add(menu);
+            }
+            List<Menu> children = menu.getChildren();// 获取菜单的子菜单
+            children.removeIf(child -> !menuIds.contains(child.getMenuId()));// 筛选出子菜单中在当前用户角色对应的菜单id中的子菜单
+        }
+        return roleMenus;
+    }
+    
 }

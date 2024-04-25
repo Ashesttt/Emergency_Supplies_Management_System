@@ -139,10 +139,6 @@ export default {
   created() {
     // 请求分页查询数据
     this.load()
-    request.get("/menu").then(res => {
-      console.log(res)
-      this.tableData = res.data
-    })
   },
 
 
