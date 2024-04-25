@@ -19,6 +19,7 @@ public class RoleController {
     @Resource
     private IRoleService roleService;
 
+
     // 新增或更新
     @PostMapping
     public Result save(@RequestBody Role role) {
@@ -66,5 +67,27 @@ public class RoleController {
         }
 //        queryWrapper.orderByDesc("id");// id倒序
         return Result.success(roleService.page(page, queryWrapper));
+    }
+
+
+    /**
+     * 绑定角色和菜单的关系
+     *
+     * @param roleId  角色id
+     * @param menuIds 菜单id集合
+     */
+    @PostMapping("/roleMenu/{roleId}")
+    public Result roleMenu(@PathVariable Integer roleId, @RequestBody List<Integer> menuIds) {
+        roleService.setRoleMenuRelation(roleId, menuIds);
+        return Result.success();
+    }
+
+    /**
+     * 根据角色id查询
+     */
+    @GetMapping("/roleMenu/{roleId}")
+    public Result findMenuByRoleId(@PathVariable Integer roleId) {
+        List<Integer> MenuId = roleService.findMenuByRoleId(roleId);
+        return Result.success(MenuId);
     }
 }

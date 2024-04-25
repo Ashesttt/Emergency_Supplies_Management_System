@@ -82,14 +82,13 @@
 
     <el-dialog title="菜单分配" :visible.sync="menuDialogVisible" width="30%">
       <el-tree
-          :props="{label: 'menuname'}"
+          node-key="menuId"
+          ref="tree"
+          :props="{label: 'menuname',}"
           :data="menuData"
           show-checkbox
-          node-key="id"
-          ref="tree"
           :default-expanded-keys="expends"
-          :default-checked-keys="checks"
-          @check-change="handleCheckChange">
+          :default-checked-keys="checks">
           <span class="custom-tree-node" slot-scope="{ node, data }">
             <span><i :class="data.icon"></i>{{ data.menuname }}</span>
           </span>
@@ -97,7 +96,7 @@
 
       <div slot="footer" class="dialog-footer">
         <el-button @click="menuDialogVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button type="primary" @click="saveRoleMenu">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -131,7 +130,8 @@ export default {
       dialogVisible: false, // 弹窗可视化
       menuData: [],// 菜单分配数据
       expends: [],// 默认展开的节点
-      checks: [] // 默认选中的节点
+      checks: [], // 默认选中的节点
+      roleId: 0, // 角色id
     }
   },
   created() {
@@ -226,15 +226,28 @@ export default {
      * */
     selectMenu(id) {
       this.menuDialogVisible = true
-      this.form = this.tableData.find(v => v.id === id)// 根据id查找对应的数据（是给角色编辑用的）
       request.get("/menu").then(res => {
-        console.log(res)
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
         this.menuData = res.data;
-        this.expends = this.menuData.map(v => v.id)
+        console.log("menuData:", this.menuData)
+        this.expends = this.menuData.map(v => v.menuId)// 默认展开所有节点
+        console.log("expends:", this.expends)
       })
+      
+      // 根据角色id查询对应的菜单信息 默认选中
+      request.get("/role/roleMenu/" + id).then(res => {
+        if (res.code === "200") {
+          this.checks = res.data
+        }
+        else {
+          this.$message.error("查询失败")
+        }
+      })
+      
+      
+      
     },
 
     /**
@@ -279,12 +292,6 @@ export default {
       this.load()
     },
 
-    /**
-     * 加载树形菜单
-     * */
-    handleCheckChange(data, checked, indeterminate) {
-      console.log(data, checked, indeterminate);
-    },
 
     /**
      * 保存用户信息
@@ -302,6 +309,22 @@ export default {
       })
     },
 
+    /**
+     * 保存角色菜单信息
+     * */
+    saveRoleMenu() {
+      let checks = this.$refs.tree.getCheckedKeys()
+      request.post("/role/roleMenu/" + this.form.id , checks).then(res => {
+        if (res.code ==="200") {  
+          this.$message.success("绑定成功")
+          this.menuDialogVisible = false
+          console.log("form.id:", this.form.id)
+          console.log("checks:", checks)
+        } else {
+          this.$message.error("保存失败")
+        }
+      })
+    }
   }
 }
 </script>
