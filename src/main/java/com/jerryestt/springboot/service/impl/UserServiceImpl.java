@@ -46,7 +46,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
             String rolename = one.getUserRole(); // 获取用户角色
             
-            List<Menu> roleMenus = getMenusByRoleName(rolename);// 用 角色名 查询 该角色对应的菜单列表
+            List<Menu> roleMenus = getMenusByRoleName(rolename);// 用 用户角色 查询 该角色对应的菜单列表
             userDTO.setMenus(roleMenus);// 设置用户菜单
             return userDTO;
         } else {// 登录失败
@@ -94,7 +94,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @return List<Menu> roleMenus 菜单列表
      * */
     private List<Menu> getMenusByRoleName(String rolename) {
-        Integer roleId = roleMapper.selectByrolename(rolename);// 根据角色名查询角色id
+        Integer roleId = roleMapper.selectByrolename(rolename);// 根据角色名称 查询角色id
         List<Integer> menuIds = roleMenuMapper.findMenuByRoleId(roleId);// 根据角色id查询这个角色拥有的菜单id
 
         List<Menu> menus = menuService.findMenus("");// 查询所有菜单
@@ -108,7 +108,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             }
             List<Menu> children = menu.getChildren();// 获取菜单的子菜单
             children.removeIf(child -> !menuIds.contains(child.getMenuId()));// 筛选出子菜单中在当前用户角色对应的菜单id中的子菜单
+
+            if (!children.isEmpty() && !roleMenus.contains(menu)) {// 如果子菜单不为空且roleMenus列表中不包含父菜单
+                Menu parent = new Menu();
+                BeanUtil.copyProperties(menu, parent, true);
+                parent.setChildren(children);
+                roleMenus.add(parent);
+            }
         }
+
+//        // 筛选出与角色关联的菜单
+//        for (Menu menu : menus) {
+//            List<Menu> children = menu.getChildren();// 获取子菜单
+//            for (Menu child : children) {
+//                if (menuIds.contains(child.getMenuId())) {// 如果子菜单的id在与角色关联的菜单id列表中
+//                    if (!roleMenus.contains(menu)) {// 如果父菜单还没有被添加到roleMenus列表中
+//                        roleMenus.add(menu);// 先添加父菜单
+//                    }
+//                    roleMenus.add(child);// 然后添加子菜单
+//                }
+//            }
+//        }
         return roleMenus;
     }
     
