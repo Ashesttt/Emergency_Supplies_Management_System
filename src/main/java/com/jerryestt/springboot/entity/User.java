@@ -5,8 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
-import java.util.Date;
+
 import java.io.Serializable;
+import java.util.Date;
 
 
 @Data
@@ -54,14 +55,6 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public User_Role getUserRole() {
-        return userRole;
-    }
-
-    public void setUserRole(User_Role userRole) {
-        this.userRole = userRole;
-    }
-
     public String getEmail() {
         return email;
     }
@@ -88,13 +81,13 @@ public class User implements Serializable {
 
 
     @TableField(value = "role")
-    private User_Role userRole;
+    private String userRole;
     private String email;
     private String phone;
     private String address;
 
     @TableField(value = "create_time")
 //    private String createTime;
-    private Date createTime;  
+    private Date createTime;
     private String avatarurl;
 }

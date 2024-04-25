@@ -58,7 +58,7 @@ export default {
               // }
               
               this.$router.push("/")//跳转到首页
-              this.$message.success("登录成功,尊贵的" + res.data.username + "用户" + "您的身份是" + res.data.role)
+              this.$message.success("登录成功,尊贵的" + res.data.username + "用户" + "您的身份是" + res.data.userRole)
               return true
             }
             if (res.code === "10001") {
