@@ -108,9 +108,16 @@
         <el-form-item label="用户名">
           <el-input v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
-        <!--TODO: 输入用户身份变成选择用户身份        -->
         <el-form-item label="用户身份">
-          <el-input v-model="form.userRole" autocomplete="off"></el-input>
+          <el-select clearable v-model="form.userRole" placeholder="请选择用户身份" style="width: 100%">
+            <el-option
+                v-for="item in options"
+                :key="item.rolename"
+                :label="item.description"
+                :value="item.rolename">
+              {{ item.description }}({{ item.rolename }})
+            </el-option>
+          </el-select>
         </el-form-item>
         <el-form-item label="邮箱">
           <el-input v-model="form.email" autocomplete="off"></el-input>
@@ -163,7 +170,8 @@ export default {
       sideWidth: 200,
       logoTextShow: true, // logo文字是否显示
       headerBg: "headerBg",
-      dialogVisible: false // 弹窗可视化
+      dialogVisible: false, // 弹窗可视化
+      options: [],
     }
   },
   created() {
@@ -301,6 +309,17 @@ export default {
     handleEdit(row) {
       this.form = row
       this.dialogFormVisible = true
+      /**
+       * 获取所有角色信息
+       * */
+      request.get("/role").then(res => {
+        console.log(res)
+        if (res.code === "200") {
+          this.options = res.data;
+          console.log("this.options：" + this.options)
+        }
+      })
+
     },
 
     /**
@@ -310,7 +329,7 @@ export default {
       console.log("id:", id)
       request.delete("/user/" + id).then(res => {
         console.log("是否删除:", res)
-        if (res.data) {
+        if (res.code === "200") {
           this.$message.success("删除成功")
           this.load()
         } else {
