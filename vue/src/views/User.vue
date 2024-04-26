@@ -7,8 +7,18 @@
     <div style="margin: 10px 0">
       <el-input style="width: 200px" placeholder="请输入用户名" suffix-icon="el-icon-search"
                 v-model="username"></el-input>
-      <el-input style="width: 200px" placeholder="请输入用户身份" suffix-icon="el-icon-user" class="ml-5"
-                v-model="userRole"></el-input>
+      <el-select clearable v-model="userRole" placeholder="请选择用户身份" style="width: 200px"
+                 suffix-icon="el-icon-user" class="ml-5">
+        <el-option
+            v-for="item in options"
+            :key="item.rolename"
+            :label="item.description"
+            :value="item.rolename">
+          {{ item.description }}({{ item.rolename }})
+        </el-option>
+      </el-select>
+
+
       <el-input style="width: 200px" placeholder="请输入邮箱" suffix-icon="el-icon-message" class="ml-5"
                 v-model="email"></el-input>
       <el-input style="width: 200px" placeholder="请输入电话" suffix-icon="el-icon-phone" class="ml-5"
@@ -204,6 +214,18 @@ export default {
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
+
+      /**
+       * 获取搜索栏的role身份选择
+       * */
+      request.get("/role").then(res => {
+        console.log(res)
+        if (res.code === "200") {
+          this.options = res.data;
+          console.log("this.options：" + this.options)
+        }
+      })
+
     },
 
     /**

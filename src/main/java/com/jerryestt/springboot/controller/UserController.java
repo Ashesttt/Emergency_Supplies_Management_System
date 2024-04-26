@@ -110,7 +110,7 @@ public class UserController {
     public Result findPage(@RequestParam Integer pageNum,
                            @RequestParam Integer pageSize,
                            @RequestParam(defaultValue = "") String username,
-                           @RequestParam(defaultValue = "") String role,
+                           @RequestParam(defaultValue = "") String userRole,
                            @RequestParam(defaultValue = "") String email,
                            @RequestParam(defaultValue = "") String phone,
                            @RequestParam(defaultValue = "") String address,
@@ -125,8 +125,8 @@ public class UserController {
         if (!"".equals(username)) {// 如果username不为空
             queryWrapper.like("username", username);
         }
-        if (!"".equals(role)) {
-            queryWrapper.like("role", role);
+        if (!"".equals(userRole)) {
+            queryWrapper.like("role", userRole);
         }
         if (!"".equals(email)) {
             queryWrapper.like("email", email);
