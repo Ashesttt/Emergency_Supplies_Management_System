@@ -1,35 +1,20 @@
 <template>
   <div style="display: flex; justify-content: space-between; padding: 20px;">
     <!--    <el-card style="width: 500px; padding: 20px; border: 1px solid #ccc">-->
-    <el-card style="width: calc(50% - 10px); padding: 20px; border: 1px solid #ccc" header="用户信息修改">
+    <el-card style="width: calc(50% - 10px); padding: 20px; border: 1px solid #ccc" header="用户密码修改">
 
-      <el-form label-width="80px" size="small">
-        <el-upload
-            class="avatar-uploader"
-            action="http://localhost:9090/file/upload"
-            :show-file-list="true"
-            :on-success="handleAvatarSuccess"
-        >
-          <img v-if="form.avatarurl" :src="form.avatarurl" class="avatar" style="object-fit: cover">
-          <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-        </el-upload>
-        <!--TODO:在user表创建一个昵称nickname，然后username就是唯一标识（不可修改）-->
-        <el-form-item label="用户名">
-          <el-input v-model="form.username" autocomplete="off" disabled></el-input>
+      <el-form label-width="150px" size="small">
+
+        <el-form-item label="输入旧密码">
+          <el-input v-model="form.password" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱">
+        <el-form-item label="输入新密码">
           <el-input v-model="form.email" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="电话">
+        <el-form-item label="再次输入新密码">
           <el-input v-model="form.phone" autocomplete="off"></el-input>
         </el-form-item>
-        <el-form-item label="地址">
-          <el-input v-model="form.address" autocomplete="off"></el-input>
-        </el-form-item>
-        <el-form-item label="创建时间">
-          <el-date-picker v-model="form.createTime" type="date" placeholder="选择日期" style="width: 100%"
-                          value-format="yyyy-MM-dd"></el-date-picker>
-        </el-form-item>
+
       </el-form>
       <div style="text-align: center">
         <el-button type="primary" @click="save">保存</el-button>
@@ -40,7 +25,7 @@
 <script>
 
 export default {
-  name: "Person",
+  name: "Change_Password",
   data() {
     return {
       form: {},

@@ -50,6 +50,11 @@ export const setRoutes = () => {
                     name: '个人信息',
                     component: () => import('../views/Person.vue')
                 },
+                {
+                    path: 'change_password',
+                    name: '修改密码',
+                    component: () => import('../views/Change_Password.vue')
+                },
             ]
         }
         const menus = JSON.parse(storeMenus)

@@ -21,8 +21,10 @@
       <span>{{ user_info.username }}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
       <el-dropdown-menu slot="dropdown" style="width: 100px; text-align: center">
         <el-dropdown-item style="font-size: 14px; padding: 5px 0">
-          <!--          <el-link :to="'/person/' + user_info.userId" style="text-decoration: none">个人信息</el-link>-->
           <router-link to="/person" style="text-decoration: none">个人信息</router-link>
+        </el-dropdown-item>
+        <el-dropdown-item style="font-size: 14px; padding: 5px 0">
+          <router-link to="/change_password" style="text-decoration: none">修改密码</router-link>
         </el-dropdown-item>
         <el-dropdown-item style="font-size: 14px; padding: 5px 0">
           <span style="text-decoration: none" @click="logout">退出</span>
