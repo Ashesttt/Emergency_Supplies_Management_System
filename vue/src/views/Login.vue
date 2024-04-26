@@ -22,6 +22,8 @@
 </template>
 
 <script>
+import {setRoutes} from "@/router";
+
 export default {
   name: "Login",
   data() {
@@ -49,14 +51,10 @@ export default {
               console.log("code=200")
               localStorage.setItem("user", JSON.stringify(res.data))//将用户信息存储到localStorage,为了在其他页面获取用户信息。如Header.vue
               localStorage.setItem("menus", JSON.stringify(res.data.menus))
-              //TODO:判断用户的身份,跳转到不同的页面
-              // if (res.data.role === "Admin"){
-              //   this.$router.push("/admin")//跳转到管理员页面
-              // }
-              // if (res.data.role === "User") {
-              //   this.$router.push("/")//跳转到首页
-              // }
+                
               
+              //动态加载路由
+              setRoutes()
               this.$router.push("/")//跳转到首页
               this.$message.success("登录成功,尊贵的" + res.data.username + "用户" + "您的身份是" + res.data.userRole)
               return true

@@ -11,7 +11,7 @@
       <el-button class="ml-5" type="primary" @click="search">搜索</el-button>
       <el-button class="ml-5" type="warning" @click="reset">重置</el-button>
     </div>
-
+    
     <div style="margin: 10px 0">
       <el-button type="primary" @click="handleAdd()">新增主菜单 <i class="el-icon-circle-plus-outline"></i></el-button>
       <el-popconfirm
@@ -36,6 +36,8 @@
       <el-table-column prop="menuname" label="菜单名称">
       </el-table-column>
       <el-table-column prop="path" label="路径">
+      </el-table-column>
+      <el-table-column prop="pagePath" label="页面路径">
       </el-table-column>
       <el-table-column prop="icon" label="图标" align="center">
         <template slot-scope="scope">
@@ -83,6 +85,9 @@
         </el-form-item>
         <el-form-item label="路径">
           <el-input v-model="form.path" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="页面路径">
+          <el-input v-model="form.pagePath" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="图标">
           <el-select clearable v-model="form.icon" placeholder="请选择图标" style="width: 100%">
@@ -134,6 +139,7 @@ export default {
       headerBg: "headerBg",
       dialogVisible: false, // 弹窗可视化
       options: [],
+      pagePath: "",
     }
   },
   created() {

@@ -58,6 +58,11 @@ public class Menu implements Serializable {
      * */
     @TableField(value = "pid")
     private Integer pid;
-
+    
+    /**
+     * 页面路径
+     * */
+    @TableField(value = "page_path")
+    private String pagePath;
     
 }
