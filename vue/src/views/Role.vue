@@ -228,7 +228,7 @@ export default {
       this.roleId = role.id
       this.rolename = role.rolename
       this.menuDialogVisible = true
-      
+
       // 查询菜单信息
       request.get("/menu").then(res => {
         if (res.code !== "200") {
@@ -239,19 +239,18 @@ export default {
         this.expends = this.menuData.map(v => v.menuId)// 默认展开所有节点
         console.log("expends:", this.expends)
       })
-      
+
       // 根据角色id查询对应的菜单信息 默认选中
       request.get("/role/roleMenu/" + this.roleId).then(res => {
         if (res.code === "200") {
           this.checks = res.data
-        }
-        else {
+          console.log("checks:", this.checks)
+        } else {
           this.$message.error("查询失败")
         }
       })
-      
-      
-      
+
+
     },
 
     /**
@@ -319,8 +318,14 @@ export default {
     saveRoleMenu() {
       let checks = this.$refs.tree.getCheckedKeys()
       console.log(this.tableData)
-      request.post("/role/roleMenu/" + this.roleId , checks).then(res => {
-        if (res.code ==="200") {  
+      request.post("/role/roleMenu/" + this.roleId, checks).then(res => {
+        // 只有管理员才有权限分配菜单，如果当前用户是管理员，那么需要重新登录
+        if (this.rolename === "Admin" && res.code === "200") {
+          this.$message.success("绑定成功，您的角色信息已经发生变化，请重新登录")
+          this.$store.commit("logout")
+          return
+        } 
+        if (res.code === "200") {
           this.$message.success("绑定成功")
           this.menuDialogVisible = false
           console.log("form.id:", this.roleId)

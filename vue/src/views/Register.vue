@@ -17,7 +17,7 @@
                     show-password v-model="user.confirmPassword"></el-input>
         </el-form-item>
         <el-form-item style="margin: 5px 0; text-align: center">
-          <el-button type="primary" size="medium" autocomplete="off" @click="login">注册</el-button>
+          <el-button type="primary" size="medium" autocomplete="off" @click="register">注册</el-button>
           <el-button type="warning" size="medium" autocomplete="off" @click="$router.push('/login')">返回登录
           </el-button>
         </el-form-item>
@@ -35,7 +35,7 @@ export default {
       rules: {
         username: [
           {required: true, message: '请输入用户名', trigger: 'blur'},
-          {min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur'}
+          {min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur'}
         ],
         password: [
           {required: true, message: '请输入密码', trigger: 'blur'},
@@ -49,7 +49,7 @@ export default {
     }
   },
   methods: {
-    login() {
+    register() {
       this.$refs['userForm'].validate((valid) => {
         if (valid) {  // 表单校验合法
           if (this.user.password !== this.user.confirmPassword) {

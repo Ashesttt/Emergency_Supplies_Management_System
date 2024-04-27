@@ -256,7 +256,7 @@ public class UserController {
     public Result register(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
         String password = userDTO.getPassword();
-        String role = userDTO.getUserRole().toString();
+//        String role = userDTO.getUserRole().toString();
 
         //同上Login方法的疑问
         if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {// 如果用户名或密码为空
@@ -264,4 +264,5 @@ public class UserController {
         }
         return Result.success(userService.register(userDTO));
     }
+    
 }

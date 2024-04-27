@@ -16,7 +16,7 @@
         :preview-src-list="[user_info.avatarurl]"
         fit="cover"
     ></el-image>
-    
+
     <el-dropdown style="width: auto; cursor: pointer">
       <span>{{ user_info.username }}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>
       <el-dropdown-menu slot="dropdown" style="width: 100px; text-align: center">
@@ -64,8 +64,7 @@ export default {
   },
   methods: {
     logout() {
-      this.$router.push("/login")//跳转到登录页面
-      localStorage.removeItem("user")//清除用户信息
+      this.$store.commit("logout")
       this.$message.success("退出成功")
     }
   }

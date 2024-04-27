@@ -34,6 +34,17 @@ const router = new VueRouter({
 })
 
 
+// 重置路由
+export const resetRouter = () => {
+    const newRouter = new VueRouter({
+        mode: 'history',
+        base: process.env.BASE_URL,
+        routes
+    })
+    router.matcher = newRouter.matcher
+}
+
+
 // 注意：刷新页面会导致页面路由重置
 export const setRoutes = () => {
     const storeMenus = localStorage.getItem("menus");
