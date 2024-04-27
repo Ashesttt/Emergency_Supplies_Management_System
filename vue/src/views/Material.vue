@@ -74,13 +74,16 @@
       </el-table-column>
       <el-table-column prop="productionDate" label="生产日期" width="140">
       </el-table-column>
+      <!--TODO: 查看今日日期，对比到期日期，再判断这个物资是否到期，是的话就把status改成expired(过期）     -->
       <el-table-column prop="expiryDate" label="到期日期">
       </el-table-column>
       <el-table-column prop="status" label="物资状态">
       </el-table-column>
 
-      <el-table-column label="操作" width="200" align="center">
+      <el-table-column label="操作" width="300" align="center">
         <template slot-scope="scope">
+          <!-- TODO:查看记录         -->
+          <!--          <el-button type="success" @click="handleEdit(scope.row)">查看记录 <i class="el-icon-receiving"></i></el-button>-->
           <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
           <el-popconfirm
               class="ml-5"

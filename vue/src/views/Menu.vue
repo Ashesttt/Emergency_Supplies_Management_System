@@ -1,7 +1,6 @@
 <template>
   <div>
     <div style="margin-bottom: 30px">
-      是一级菜单而且没有路径的才可以新增子菜单
     </div>
 
     <div style="margin: 10px 0">
