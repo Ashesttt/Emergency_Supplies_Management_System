@@ -265,4 +265,14 @@ public class UserController {
         return Result.success(userService.register(userDTO));
     }
     
+    
+    /**
+     * 根据id查询用户信息
+     * */
+    @GetMapping("/{id}")
+    public Result findById(@PathVariable Integer id) {
+        return Result.success(userService.getById(id));
+    }
+    
+    
 }

@@ -45,7 +45,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             userDTO.setToken(token);
 
             String rolename = one.getUserRole(); // 获取用户角色
-            
+
             List<Menu> roleMenus = getMenusByRoleName(rolename);// 用 用户角色 查询 该角色对应的菜单列表
             userDTO.setMenus(roleMenus);// 设置用户菜单
             return userDTO;
@@ -87,12 +87,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return one;
     }
-    
+
     /**
      * 封装 用 角色名 查询 该角色对应的菜单列表
+     *
      * @param rolename 角色名
      * @return List<Menu> roleMenus 菜单列表
-     * */
+     */
     private List<Menu> getMenusByRoleName(String rolename) {
         Integer roleId = roleMapper.selectByrolename(rolename);// 根据角色名称 查询角色id
         List<Integer> menuIds = roleMenuMapper.findMenuByRoleId(roleId);// 根据角色id查询这个角色拥有的菜单id
@@ -131,5 +132,5 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //        }
         return roleMenus;
     }
-    
+
 }

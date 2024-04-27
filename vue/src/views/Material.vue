@@ -17,7 +17,7 @@
           {{ item }}
         </el-option>
       </el-select>
-      <el-select clearable v-model="status" placeholder="请选择物资种类" style="width: 200px"
+      <el-select clearable v-model="status" placeholder="请选择物资状态" style="width: 200px"
                  suffix-icon="el-icon-user" class="ml-5">
         <el-option
             v-for="item in options_status"
