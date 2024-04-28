@@ -3,7 +3,7 @@
     <div style="text-align: center; font-size: 40px; margin-top: 20px; margin-bottom: 40px">
       欢迎使用应急救援装备管理系统
     </div>
-    
+
     <el-row :gutter="10" style="margin-bottom: 40px">
       <el-col :span="6">
         <el-card>
@@ -47,8 +47,8 @@
         </el-card>
       </el-col>
     </el-row>
-    
-    
+
+
     <el-row>
       <el-col :span="12">
         <div id="pie" style="width: 500px; height: 400px"></div>
@@ -57,7 +57,7 @@
         <div id="main" style="width: 500px; height: 400px"></div>
       </el-col>
     </el-row>
-    
+
     <el-row>
       <el-col :span="12">
         <el-card>
@@ -134,6 +134,11 @@ export default {
 
     this.request.get("/echarts/members").then(res => {
       console.log(res)
+      // 如果是401，跳转到登录页面
+      if (res.code === "401") {
+        this.$store.commit("logout")
+        return
+      }
       pieOption.series[0].data = [
         {name: "第一季度", value: res.data[0]},
         {name: "第二季度", value: res.data[1]},

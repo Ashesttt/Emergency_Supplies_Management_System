@@ -1,5 +1,6 @@
 import axios from 'axios'
 import ElementUI from "element-ui";
+import router, {resetRouter} from "@/router";
 
 const request = axios.create({
     baseURL: 'http://localhost:9090',

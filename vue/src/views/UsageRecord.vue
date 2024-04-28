@@ -1,7 +1,7 @@
 <template>
   <div>
     <div style="margin-bottom: 30px">
-
+    tips:这个使用记录是指申请成功的记录，如果申请失败，不会记录在这里
     </div>
 
     <div style="margin: 10px 0">
