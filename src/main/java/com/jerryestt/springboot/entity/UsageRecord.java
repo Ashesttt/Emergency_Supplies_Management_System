@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @Data
 public class UsageRecord implements Serializable {
     /**
-     * 申请记录id
+     * 使用记录id
      */
     @TableId(value = "usage_record_id", type = IdType.AUTO)
     private Integer usageRecordId;
@@ -40,10 +40,22 @@ public class UsageRecord implements Serializable {
     private LocalDateTime recordTime;
 
     /**
-     * 申请使用数量
+     * 使用数量
      */
     @TableField(value = "usage_quantity")
     private Integer usageQuantity;
+    
+    /**
+     * 申请使用之前的仓库数量
+     * */
+    @TableField(value = "quantity_before_application")
+    private Integer quantityBeforeApplication;
+    
+    /**
+     * 使用原因
+     */
+    @TableField(value = "usage_reason")
+    private String usageReason;
 
     // 新增字段
     /**
@@ -57,13 +69,7 @@ public class UsageRecord implements Serializable {
      */
     @TableField(exist = false)
     private MaterialType materialType;
-
-    /**
-     * 物资仓库数量
-     */
-    @TableField(exist = false)
-    private Integer quantity;
-
+    
 
     /**
      * 用户名
@@ -81,7 +87,6 @@ public class UsageRecord implements Serializable {
     public void setMaterial(Material material) {
         this.materialName = material.getMaterialName();
         this.materialType = material.getMaterialType();
-        this.quantity = material.getQuantity();
     }
 
     public void setUser(User user) {

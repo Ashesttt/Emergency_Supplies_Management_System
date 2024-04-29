@@ -6,11 +6,11 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerryestt.springboot.common.Result;
 import com.jerryestt.springboot.entity.Material;
-import com.jerryestt.springboot.entity.UsageRecord;
 import com.jerryestt.springboot.entity.User;
+import com.jerryestt.springboot.entity.UserMaterial;
 import com.jerryestt.springboot.service.IMaterialService;
 import com.jerryestt.springboot.service.IUserService;
-import com.jerryestt.springboot.service.UsageRecordService;
+import com.jerryestt.springboot.service.UserMaterialService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -18,61 +18,28 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/usagerecord")
-public class UsageRecordController {
+@RequestMapping("/user_material")
+public class UserMaterialController {
 
     @Resource
-    private UsageRecordService usageRecordService;
+    private UserMaterialService userMaterialService;
 
     @Resource
     private IMaterialService materialService;
 
     @Resource
     private IUserService userService;
-
-    // 新增或更新
-    @PostMapping
-    public Result save(@RequestBody UsageRecord usageRecord) {
-        return Result.success(usageRecordService.saveOrUpdate(usageRecord));
+    
+    // 用user_id和material_id删除
+    @PostMapping("/{user_id}/{material_id}")
+    public Result deleteByUserIdAndMaterialId(@PathVariable Integer user_id, @PathVariable Integer material_id) {
+        QueryWrapper<UserMaterial> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", user_id);
+        queryWrapper.eq("material_id", material_id);
+        return Result.success(userMaterialService.remove(queryWrapper));
     }
 
-    // 根据id查询
-    @GetMapping("/{id}")
-    public Result findById(@PathVariable Integer id) {
-        return Result.success(usageRecordService.getById(id));
-    }
-
-
-    // 删除
-    @DeleteMapping("/{id}")
-    public Result delete(@PathVariable Integer id) {
-        return Result.success(usageRecordService.removeById(id));
-    }
-
-    // 批量删除
-    @PostMapping("/del/batch")
-    public Result deleteBatch(@RequestBody List<Integer> ids) {
-        return Result.success("成功删除" + usageRecordService.removeByIds(ids) + "条数据");
-    }
-
-    // 查询所有
-    @GetMapping
-    public Result findAll() {
-        return Result.success(usageRecordService.findAll());
-    }
-
-
-    /**
-     * 分页查询
-     *                @param pageNum 当前页
-     *                pageSize 每页显示的条数
-     *                username 用户名
-     *                userRole 用户身份
-     *                materialName 物资名称
-     *                materialType 物资种类
-     *                @return
-     *     
-     * */
+    // 分页查询
     @GetMapping("/page")
     public Result findPage(@RequestParam Integer pageNum,
                            @RequestParam Integer pageSize,
@@ -81,7 +48,8 @@ public class UsageRecordController {
                            @RequestParam(defaultValue = "") String materialName,
                            @RequestParam(defaultValue = "") String materialType) {
 
-        IPage<UsageRecord> page = new Page<>(pageNum, pageSize);
+        IPage<UserMaterial> page = new Page<>(pageNum, pageSize);
+        
         /**
          * 模糊查询
          * */
@@ -109,30 +77,27 @@ public class UsageRecordController {
         List<Material> materials = materialService.list(materialQueryWrapper);
         List<Integer> materialIds = materials.stream().map(Material::getMaterialId).collect(Collectors.toList());// 获取物资id列表
 
-        // 用 用户id和物资id 查询 使用记录
-        QueryWrapper<UsageRecord> queryWrapper = new QueryWrapper<>();
+        // 用 用户id和物资id 查询 该用户拥有的物资
+        QueryWrapper<UserMaterial> queryWrapper = new QueryWrapper<>();
         if (!userIds.isEmpty()) {
             queryWrapper.in("user_id", userIds);
         }
         if (!materialIds.isEmpty()) {
             queryWrapper.in("material_id", materialIds);
         }
-        
-        // 再用 用户id和物资id 分别查询 用户名，用户身份，物资名称，物资种类，物资仓库数量
-        IPage<UsageRecord> usageRecordPage = usageRecordService.page(page, queryWrapper);// 分页查询
-        List<UsageRecord> records = usageRecordPage.getRecords();// 获取记录列表
-        records.forEach(record -> {// 遍历记录列表
+
+        IPage<UserMaterial> userMaterialIPage = userMaterialService.page(page, queryWrapper);
+        List<UserMaterial> records = userMaterialIPage.getRecords();
+        records.forEach(record -> {
             User user = userService.getById(record.getUserId());
-            Material material = materialService.getById(record.getMaterialId());
-            record.setUserName(user.getUsername());
+            record.setUsername(user.getUsername());
             record.setUserRole(user.getUserRole());
+            Material material = materialService.getById(record.getMaterialId());
             record.setMaterialName(material.getMaterialName());
             record.setMaterialType(material.getMaterialType());
         });
-        
-        
 
-        return Result.success(usageRecordPage);
+
+        return Result.success(userMaterialIPage);
     }
-
 }

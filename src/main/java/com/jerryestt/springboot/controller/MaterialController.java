@@ -93,7 +93,20 @@ public class MaterialController {
         Status[] status = Status.values();
         return Result.success(status);
     }
-
+    
+    // 获取所有的物资名字
+    @GetMapping("/materialName")
+    public Result findAllmaterialName() {
+        List<Object> materialNames = meterialSerivce.findAllMaterialName();
+        return Result.success(materialNames);
+    }
+    
+    // 通过物资名字查询物资id
+    @GetMapping("/materialId")
+    public Result findMaterialIdByMaterialName(@RequestParam String materialName) {
+        Integer materialId = meterialSerivce.findMaterialIdByMaterialName(materialName);
+        return Result.success(materialId);
+    }
 
 }
     

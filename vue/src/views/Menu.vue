@@ -79,6 +79,9 @@
 
     <el-dialog title="菜单信息" :visible.sync="dialogFormVisible" width="30%">
       <el-form label-width="80px" size="small">
+        <el-form-item label="父菜单id">
+          <el-input v-model="form.menuId" autocomplete="off"></el-input>
+        </el-form-item>
         <el-form-item label="菜单名称">
           <el-input v-model="form.menuname" autocomplete="off"></el-input>
         </el-form-item>

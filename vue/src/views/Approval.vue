@@ -1,26 +1,17 @@
 <template>
   <div>
-    <div style="margin-bottom: 30px"></div>
+    <div style="margin-bottom: 30px">
+    </div>
 
     <div style="margin: 10px 0">
       <el-input style="width: 200px" placeholder="请输入用户名" suffix-icon="el-icon-search"
                 v-model="username"></el-input>
-      <el-select clearable v-model="userRole" placeholder="请选择用户身份" style="width: 200px"
-                 suffix-icon="el-icon-user" class="ml-5">
-        <el-option
-            v-for="item in options_userRole"
-            :key="item.rolename"
-            :label="item.description"
-            :value="item.rolename">
-          {{ item.description }}({{ item.rolename }})
-        </el-option>
-      </el-select>
       <el-input style="width: 200px" placeholder="请输入物资名字" suffix-icon="el-icon-search" class="ml-5"
                 v-model="materialName"></el-input>
-      <el-select clearable v-model="materialType" placeholder="请选择物资种类" style="width: 200px"
+      <el-select clearable v-model="approvalStatus" placeholder="请选择审批状态" style="width: 200px"
                  suffix-icon="el-icon-user" class="ml-5">
         <el-option
-            v-for="item in options_materialType"
+            v-for="item in options_approvalStatus"
             :key="item"
             :label="item"
             :value="item">
@@ -33,68 +24,53 @@
     </div>
 
     <div style="margin: 10px 0">
-      <el-popconfirm
-          class="ml-5"
-          confirm-button-text='确定'
-          cancel-button-text='取消'
-          icon="el-icon-warning"
-          icon-color="red"
-          title="您确定批量删除这些用户信息吗？"
-          @confirm="delBatch"
-      >
-        <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
-      </el-popconfirm>
 
     </div>
 
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="usageRecordId" label="仓库出库记录id">
+      <el-table-column prop="applicationId" label="申请id">
       </el-table-column>
-
-      <el-table-column prop="recordTime" label="出库时间" width="150">
+      <el-table-column prop="applyTime" label="申请时间">
       </el-table-column>
-
-<!--      <el-table-column prop="userId" label="申请人id">-->
+      <el-table-column prop="applyReason" label="申请原因">
+      </el-table-column>
+<!--      <el-table-column prop="userId" label="用户id">-->
 <!--      </el-table-column>-->
-
-      <el-table-column prop="userName" label="申请人">
+      <el-table-column prop="username" label="用户名">
       </el-table-column>
-
-      <el-table-column prop="userRole" label="申请人角色">
-      </el-table-column>
-      
-      <el-table-column prop="usageReason" label="申请原因">
-      </el-table-column>
-
-<!--      <el-table-column prop="materialId" label="出库物资id">-->
+<!--      <el-table-column prop="userRole" label="用户角色">-->
 <!--      </el-table-column>-->
-
-      <el-table-column prop="materialName" label="出库物资名称">
+<!--      <el-table-column prop="materialId" label="物资id">-->
+<!--      </el-table-column>-->
+      <el-table-column prop="materialName" label="物资名称">
+      </el-table-column>
+<!--      <el-table-column prop="materialType" label="物资类型">-->
+<!--      </el-table-column>-->
+      <el-table-column prop="applyQuantity" label="申请数量">
+      </el-table-column>
+      <el-table-column prop="approvalStatus" label="申请状态">
+        <!--TODO:通过判断申请状态 显示不同的图标       -->
+      </el-table-column>
+      <el-table-column prop="approvalTime" label="审批时间">
       </el-table-column>
 
-      <el-table-column prop="materialType" label="出库物资类型">
-      </el-table-column>
-      <el-table-column prop="quantityBeforeApplication" label="出库前仓库总量">
-      </el-table-column>
-      <el-table-column prop="usageQuantity" label="出库数量">
-      </el-table-column>
 
-
-      <el-table-column label="操作" width="300" align="center">
+      <el-table-column label="操作" align="center">
         <template slot-scope="scope">
           <el-popconfirm
               class="ml-5"
               confirm-button-text='确定'
               cancel-button-text='取消'
-              icon="el-icon-warning"
-              icon-color="red"
-              title="您确定删除这个用户信息吗？"
-              @confirm="del(scope.row.usageRecordId)"
+              icon="el-icon-circle-check"
+              icon-color="green"
+              title="您确定审批通过这个申请信息吗？"
+              @confirm="approve(scope.row.applicationId)"
           >
-            <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>
+            <el-button type="success" slot="reference">通过 <i class="el-icon-circle-check"></i></el-button>
           </el-popconfirm>
+
         </template>
       </el-table-column>
     </el-table>
@@ -116,7 +92,7 @@
 import request from "@/utils/request";
 
 export default {
-  name: "Material.vue",
+  name: "UserMaterial",
   data() {
     return {
       tableData: [],
@@ -125,6 +101,7 @@ export default {
       pageNum: 1,
       pageSize: 10,
       usageRecordId: "",
+      applicationId: "",
       username: "",
       userRole: "",
       userId: "",
@@ -136,6 +113,7 @@ export default {
       productionDate: "",
       expiryDate: "",
       status: "",
+      approvalStatus: "",
       form: {},
       dialogFormVisible: false,
       multipleSelection: [],
@@ -148,6 +126,7 @@ export default {
       dialogVisible: false, // 弹窗可视化
       options_userRole: [],
       options_materialType: [],
+      options_approvalStatus: [],
     }
   },
   created() {
@@ -161,14 +140,13 @@ export default {
      * 查询数据方法
      * */
     load() {
-      request.get("/usagerecord/page", {
+      request.get("/apply/page", {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           username: this.username,
-          userRole: this.userRole,
           materialName: this.materialName,
-          materialType: this.materialType,
+          approvalStatus: this.approvalStatus
         }
       }).then(res => {
         console.log(res)
@@ -179,29 +157,18 @@ export default {
         this.total = res.data.total;
       })
 
-
       /**
-       * 获取物资类型
+       * 获取所有申请状态
        * */
-      request.get("/material/materialType").then(res => {
+      request.get("/apply/approvalStatus").then(res => {
         console.log("res:", res)
         if (res.code !== "200") {
           this.$message.error("获取失败,原因：" + res.msg)
         } else {
-          this.options_materialType = res.data;
+          this.options_approvalStatus = res.data;
         }
       })
 
-      /**
-       * 获取搜索栏的role身份选择
-       * */
-      request.get("/role").then(res => {
-        console.log(res)
-        if (res.code === "200") {
-          this.options_userRole = res.data;
-          console.log("this.options：" + this.options)
-        }
-      })
     },
 
 
@@ -211,10 +178,9 @@ export default {
     async reset() {
       try {
         await this.handle_reset();
-        this.userName = "";
-        this.userRole = "";
+        this.username = "";
         this.materialName = "";
-        this.materialType = "";
+        this.approvalStatus = "";
         this.load();
       } catch (error) {
         // 用户点击了取消，所以不执行任何操作
@@ -238,22 +204,6 @@ export default {
 
 
     /**
-     * 批量删除
-     * */
-    delBatch() {
-      let ids = this.multipleSelection.map(v => v.usageRecordId)  // [{}, {}, {}] => [1,2,3]
-      console.log("ids:", ids)
-      request.post("/usagerecord/del/batch", ids).then(res => {
-        if (res.code === "200") {
-          this.$message.success("批量删除成功")
-          this.load()
-        } else {
-          this.$message.error("批量删除失败,原因：" + res.msg)
-        }
-      })
-    },
-
-    /**
      * 处理选中的数据
      * */
     handleSelectionChange(val) {
@@ -262,17 +212,23 @@ export default {
     },
 
     /**
-     * 删除用户信息
-     * */
-    del(id) {
-      console.log("id:", id)
-      request.delete("/usagerecord/" + id).then(res => {
-        console.log("是否删除:", res)
+     * 通过
+     * 流程：
+     *      1.首先在apply_info表里，通过application_id 来更新表：把申请状态approvalStatus的值变成Approved 在获取当前时间 给approval_time
+     *      2.接着在material_info表 通过material_id 把申请数量apply_quantity直接拿到后端作比较再更新仓库数量
+     *      3.然后去usage_record表，通过user_id,material_id,apply_quantity,获取当前时间，更新表
+     *      4.最后去user_material表，通过user_id,material_id,apply_quantity来增加表里的quantity
+     **/
+    approve(applicationId) {
+      request.put("/apply/approval", {
+        applicationId: applicationId
+      }).then(res => {
+        console.log("是否通过:", res)
         if (res.code === "200") {
-          this.$message.success("删除成功")
+          this.$message.success("审批通过")
           this.load()
         } else {
-          this.$message.error("删除失败")
+          this.$message.error("审批失败")
         }
       })
     },

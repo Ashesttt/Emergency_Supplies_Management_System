@@ -382,6 +382,7 @@ export default {
      * 保存用户信息
      * */
     save() {
+      console.log("this.form:", this.form)
       request.post("/user", this.form).then(res => {
         if (res.data) {
           this.$message.success("保存成功")
