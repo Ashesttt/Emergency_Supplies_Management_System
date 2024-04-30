@@ -126,8 +126,10 @@ public class UsageRecordController {
             Material material = materialService.getById(record.getMaterialId());
             record.setUserName(user.getUsername());
             record.setUserRole(user.getUserRole());
+            record.setAvatarurl(user.getAvatarurl());
             record.setMaterialName(material.getMaterialName());
             record.setMaterialType(material.getMaterialType());
+            record.setMaterialUrl(material.getMaterialUrl());
         });
         
         

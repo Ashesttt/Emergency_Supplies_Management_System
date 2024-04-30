@@ -55,5 +55,9 @@ export default {
 </script>
 
 <style scoped>
-
+.el-aside {
+  position: fixed;
+  overflow: auto;
+  height: 100vh;
+}
 </style>

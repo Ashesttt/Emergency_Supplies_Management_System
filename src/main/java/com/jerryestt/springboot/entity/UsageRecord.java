@@ -82,6 +82,18 @@ public class UsageRecord implements Serializable {
      */
     @TableField(exist = false)
     private String userRole;
+    
+    /**
+     * 用户头像
+     * */
+    @TableField(exist = false)
+    private String avatarurl;
+
+    /**
+     * 物资图片
+     * */
+    @TableField(exist = false)
+    private String materialUrl;
 
 
     public void setMaterial(Material material) {

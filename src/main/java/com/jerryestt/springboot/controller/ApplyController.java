@@ -106,9 +106,13 @@ public class ApplyController {
             User user = userService.getById(record.getUserId());
             record.setUsername(user.getUsername());
             record.setUserRole(user.getUserRole());
+            // 通过用户id获取头像
+            record.setAvatarurl(user.getAvatarurl());
             Material material = materialService.getById(record.getMaterialId());
             record.setMaterialName(material.getMaterialName());
             record.setMaterialType(material.getMaterialType());
+            // 通过物资id获取物资图片
+            record.setMaterialUrl(material.getMaterialUrl());
 //            record.setQuantity(material.getQuantity());// 不加这个仓库总数，因为他会变的
         });
         return Result.success(applyIPage);

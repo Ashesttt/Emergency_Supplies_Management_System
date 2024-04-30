@@ -59,7 +59,22 @@
 <!--      <el-table-column prop="userId" label="申请人id">-->
 <!--      </el-table-column>-->
 
-      <el-table-column prop="userName" label="申请人">
+<!--      <el-table-column prop="userName" label="申请人">-->
+<!--      </el-table-column>-->
+      <el-table-column prop="avatarurl" label="申请人">
+        <template slot-scope="scope">
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <el-image
+                style="width: 30px; height: 30px; border-radius:50%;"
+                :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
+                :preview-src-list="[scope.row.avatarurl]"
+                fit="cover"
+            ></el-image>
+          </div>
+          <div style="display: flex; justify-content: center; align-items: center;">
+            {{ scope.row.userName }}
+          </div>
+        </template>
       </el-table-column>
 
       <el-table-column prop="userRole" label="申请人角色">
@@ -71,7 +86,22 @@
 <!--      <el-table-column prop="materialId" label="出库物资id">-->
 <!--      </el-table-column>-->
 
-      <el-table-column prop="materialName" label="出库物资名称">
+<!--      <el-table-column prop="materialName" label="出库物资名称">-->
+<!--      </el-table-column>-->
+      <el-table-column prop="materialUrl" label="出库物资名称">
+        <template slot-scope="scope">
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <el-image
+                style="width: 30px; height: 30px; border-radius:50%;"
+                :src="scope.row.materialUrl ? scope.row.materialUrl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
+                :preview-src-list="[scope.row.materialUrl]"
+                fit="cover"
+            ></el-image>
+          </div>
+          <div style="display: flex; justify-content: center; align-items: center;">
+            {{ scope.row.materialName }}
+          </div>
+        </template>
       </el-table-column>
 
       <el-table-column prop="materialType" label="出库物资类型">

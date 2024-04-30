@@ -92,9 +92,11 @@ public class UserMaterialController {
             User user = userService.getById(record.getUserId());
             record.setUsername(user.getUsername());
             record.setUserRole(user.getUserRole());
+            record.setAvatarurl(user.getAvatarurl());
             Material material = materialService.getById(record.getMaterialId());
             record.setMaterialName(material.getMaterialName());
             record.setMaterialType(material.getMaterialType());
+            record.setMaterialUrl(material.getMaterialUrl());
         });
 
 

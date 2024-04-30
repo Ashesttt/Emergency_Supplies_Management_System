@@ -94,4 +94,17 @@ public class Apply implements Serializable {
      */
     @TableField(exist = false)
     private Integer quantity;
+    
+    /**
+     * 用户头像
+     * */
+    @TableField(exist = false)
+    private String avatarurl;
+    
+    /**
+     * 物资图片
+     * */
+    @TableField(exist = false)
+    private String materialUrl;
+    
 }

@@ -55,4 +55,16 @@ public class UserMaterial implements Serializable {
      * */
     @TableField(exist = false)
     private MaterialType materialType;
+
+    /**
+     * 用户头像
+     * */
+    @TableField(exist = false)
+    private String avatarurl;
+
+    /**
+     * 物资图片
+     * */
+    @TableField(exist = false)
+    private String materialUrl;
 }

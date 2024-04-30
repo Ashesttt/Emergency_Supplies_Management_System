@@ -58,7 +58,7 @@
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="userId" label="用户ID" width="100">
       </el-table-column>
-      <el-table-column prop="avatarurl" label="头像" width="100">
+      <el-table-column prop="avatarurl" label="头像">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
             <el-image
