@@ -66,18 +66,20 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="materialName" label="物资名字" width="140">
+      <el-table-column prop="materialName" label="物资名字">
       </el-table-column>
-      <el-table-column prop="materialType" label="物资类型" width="120">
+      <el-table-column prop="materialType" label="物资类型">
       </el-table-column>
-      <el-table-column prop="quantity" label="数量" width="140">
+      <el-table-column prop="quantity" label="数量">
       </el-table-column>
-      <el-table-column prop="productionDate" label="生产日期" width="140">
+      <el-table-column prop="productionDate" label="生产日期">
       </el-table-column>
       <!--TODO: 查看今日日期，对比到期日期，再判断这个物资是否到期，是的话就把status改成expired(过期）     -->
       <el-table-column prop="expiryDate" label="到期日期">
       </el-table-column>
       <el-table-column prop="status" label="物资状态">
+      </el-table-column>
+      <el-table-column prop="threshold" label="预警阈值">
       </el-table-column>
 
       <el-table-column label="操作" width="300" align="center">
@@ -153,7 +155,7 @@
         </el-form-item>
         <el-form-item label="目前状态">
           <el-select clearable v-model="form.status" placeholder="请选择物资种类" style="width: 100%"
-                     suffix-icon="el-icon-user" class="ml-5">
+                     suffix-icon="el-icon-user">
             <el-option
                 v-for="item in options_status"
                 :key="item"
@@ -163,6 +165,10 @@
             </el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="设置阈值">
+          <el-input v-model="form.threshold" autocomplete="off"></el-input>
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
@@ -192,6 +198,7 @@ export default {
       productionDate: "",
       expiryDate: "",
       status: "",
+      threshold: "",
       form: {},
       dialogFormVisible: false,
       multipleSelection: [],
@@ -338,6 +345,7 @@ export default {
       this.dialogFormVisible = true
     },
 
+
     /**
      * 删除用户信息
      * */
@@ -396,14 +404,35 @@ export default {
   background: #eee !important;
 }
 
+.avatar-uploader {
+  text-align: center;
+  padding-bottom: 10px;
+}
+
+.avatar-uploader .el-upload {
+  border: 1px dashed #d9d9d9;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: #409EFF;
+}
+
+.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 138px;
+  height: 138px;
+  line-height: 138px;
+  text-align: center;
+}
+
 .avatar {
   width: 138px;
   height: 138px;
   display: block;
-}
-
-.avatar-uploader {
-  text-align: center;
-  padding-bottom: 10px;
 }
 </style>

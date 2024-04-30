@@ -36,23 +36,24 @@
       </el-table-column>
       <el-table-column prop="applyReason" label="申请原因">
       </el-table-column>
-<!--      <el-table-column prop="userId" label="用户id">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="userId" label="用户id">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="username" label="用户名">
       </el-table-column>
-<!--      <el-table-column prop="userRole" label="用户角色">-->
-<!--      </el-table-column>-->
-<!--      <el-table-column prop="materialId" label="物资id">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="userRole" label="用户角色">-->
+      <!--      </el-table-column>-->
+      <!--      <el-table-column prop="materialId" label="物资id">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="materialName" label="物资名称">
       </el-table-column>
-<!--      <el-table-column prop="materialType" label="物资类型">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="materialType" label="物资类型">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="applyQuantity" label="申请数量">
       </el-table-column>
       <el-table-column prop="approvalStatus" label="申请状态">
         <!--TODO:通过判断申请状态 显示不同的图标       -->
       </el-table-column>
+      
       <el-table-column prop="approvalTime" label="审批时间">
       </el-table-column>
 
@@ -223,12 +224,24 @@ export default {
       request.put("/apply/approval", {
         applicationId: applicationId
       }).then(res => {
-        console.log("是否通过:", res)
-        if (res.code === "200") {
-          this.$message.success("审批通过")
+        if (res.code === "11000") { //成功但仓库快没有物资啦
+          this.$message.success("审批成功")
+          const h = this.$createElement;
+          this.$notify({
+            title: '!!!警告!!!',
+            message: h('i', { style: 'color: teal'},res.msg),
+            type: 'warning',
+            duration: 0
+          });
+          this.load()
+          return
+        }
+        if (res.code !== "200") {
+          this.$message.error("审批失败" + res.msg)
           this.load()
         } else {
-          this.$message.error("审批失败")
+          this.$message.success(res.msg)
+          this.load()
         }
       })
     },

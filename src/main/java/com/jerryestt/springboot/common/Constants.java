@@ -15,7 +15,7 @@ public interface Constants {
     String USERNAME_OR_PASSWORD_CANNOT_BE_EMPTY = "10002";// 用户名或密码不能为空
     String USERNAME_ALREADY_EXISTS = "10003";// 用户名已存在
     String USER_NOT_FOUND = "10004";// 用户未找到
-    
     String DICT_TYPE_ICON = "icon";// 字典类型-图标
+    String SUCCESS_BUT_RUNNING_OUT_OF_MATERIAL = "11000"; //成功但仓库快没有物资啦
 }
 

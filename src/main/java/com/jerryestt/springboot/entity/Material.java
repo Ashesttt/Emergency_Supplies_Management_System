@@ -4,15 +4,15 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
-import java.time.LocalDate;
 import lombok.Data;
 
+import java.io.Serializable;
+import java.time.LocalDate;
+
 /**
- * 
  * @TableName material_info
  */
-@TableName(value ="material_info")
+@TableName(value = "material_info")
 @Data
 public class Material implements Serializable {
     /**
@@ -56,11 +56,16 @@ public class Material implements Serializable {
      */
     @TableField(value = "expiry_date")
     private LocalDate expiryDate;
-    
 
     /**
      * 目前状态
      */
     @TableField(value = "status")
     private Status status;
+
+    /**
+     * 预警阈值
+     * */
+    @TableField(value = "threshold")
+    private Integer threshold;
 }
