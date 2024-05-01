@@ -41,7 +41,7 @@ public class UsageRecordServiceImpl extends ServiceImpl<UsageRecordMapper, Usage
                     usageRecord.setUser(user);
                 }
 
-                String materialId = usageRecord.getMaterialId();
+                String materialId = String.valueOf(usageRecord.getMaterialId());
                 Material material = materialMapper.selectById(materialId);
                 if (material == null) {
                     log.warn("No material found with id: " + materialId);

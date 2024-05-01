@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -115,6 +115,7 @@ public class ApplyController {
             record.setMaterialUrl(material.getMaterialUrl());
 //            record.setQuantity(material.getQuantity());// 不加这个仓库总数，因为他会变的
         });
+
         return Result.success(applyIPage);
     }
 
@@ -199,7 +200,7 @@ public class ApplyController {
             // 3.然后去usage_record表，通过user_id,material_id,apply_quantity,获取当前时间，更新表
             UsageRecord usageRecord = new UsageRecord();
             usageRecord.setUserId(applyInfo.getUserId());
-            usageRecord.setMaterialId(String.valueOf(applyInfo.getMaterialId()));
+            usageRecord.setMaterialId(applyInfo.getMaterialId());
             usageRecord.setUsageQuantity(applyInfo.getApplyQuantity());
             usageRecord.setQuantityBeforeApplication(quantity);// 申请使用之前的仓库数量
             usageRecord.setUsageReason(applyInfo.getApplyReason());// 使用原因

@@ -22,21 +22,33 @@
     </div>
 
     <div style="margin: 10px 0">
-      <el-button type="primary" @click="handleApply">申请 <i class="el-icon-circle-plus-outline"></i></el-button>
+      <el-button type="success" @click="handleApply">申请 <i class="el-icon-circle-plus-outline"></i></el-button>
     </div>
 
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
-
-      <el-table-column prop="username" label="用户名">
+      <el-table-column prop="avatarurl" label="用户名">
+        <template slot-scope="scope">
+          <div style="display: flex; justify-content: center; align-items: center;">
+            <el-image
+                style="width: 30px; height: 30px; border-radius:50%;"
+                :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
+                :preview-src-list="[scope.row.avatarurl]"
+                fit="cover"
+            ></el-image>
+          </div>
+          <div style="display: flex; justify-content: center; align-items: center;">
+            {{ scope.row.username }}
+          </div>
+        </template>
       </el-table-column>
 
       <el-table-column prop="userRole" label="用户角色">
       </el-table-column>
 
-<!--      <el-table-column prop="materialName" label="物资名称">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="materialName" label="物资名称">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="materialUrl" label="物资名称">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
@@ -61,17 +73,9 @@
 
       <el-table-column label="操作" width="300" align="center">
         <template slot-scope="scope">
-          <!--          <el-popconfirm-->
-          <!--              class="ml-5"-->
-          <!--              confirm-button-text='确定'-->
-          <!--              cancel-button-text='取消'-->
-          <!--              icon="el-icon-warning"-->
-          <!--              icon-color="red"-->
-          <!--              title="您确定删除这个用户信息吗？"-->
-          <!--              @confirm="del(scope.row.userId, scope.row.materialId)"-->
-          <!--          >-->
-          <!--            <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>-->
-          <!--          </el-popconfirm>-->
+          <el-button type="primary" slot="reference" @click="handleUse(scope.row.materialId,scope.row.materialName)">使用
+            <i class="el-icon-remove-outline"></i>
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -116,6 +120,27 @@
         </div>
       </el-dialog>
 
+      <el-dialog title="使用物资" :visible.sync="UseFormVisible" width="30%">
+        <el-form label-width="80px" size="small">
+          <el-form-item label="物资名字">
+            <el-input v-model="Useform.materialName" autocomplete="off" disabled></el-input>
+          </el-form-item>
+
+          <el-form-item label="使用数量">
+            <el-input v-model="Useform.usage_quantity" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="使用原因">
+            <el-input v-model="Useform.usage_reason" autocomplete="off"></el-input>
+          </el-form-item>
+
+
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="UseFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="use()">确 定</el-button>
+        </div>
+      </el-dialog>
+
 
     </div>
   </div>
@@ -147,8 +172,11 @@ export default {
       status: "",
       applyQuantity: "",
       applyReason: "",
+      usage_quantity: "",
+      usage_reason: "",
       form: {},
       damn: {},
+      Useform: {},
       multipleSelection: [],
       msg: "hello mxy",
       collapseBtnClass: "el-icon-s-fold",
@@ -156,7 +184,8 @@ export default {
       sideWidth: 200,
       logoTextShow: true, // logo文字是否显示
       headerBg: "headerBg",
-      ApplyFormVisible: false, // 弹窗可视化
+      ApplyFormVisible: false, // 申请弹窗可视化
+      UseFormVisible: false, // 使用弹窗可视化
       options_userRole: [],
       options_materialType: [],
       options_materialName: [],
@@ -241,6 +270,18 @@ export default {
      * 申请物资
      * */
     apply(materialName) {
+      if (!this.damn.materialName) {
+        this.$message.error("请选择要申请的物资")
+        return
+      }
+      if (!this.form.applyQuantity) {
+        this.$message.error("申请数量不能为空")
+        return
+      }
+      if (!this.form.applyReason) {
+        this.$message.error("申请原因不能为空")
+        return
+      }
       // 通过materialName获取materialId
       // let materialName = this.damn.materialName;
       request.get("/material/materialId/", {
@@ -253,7 +294,7 @@ export default {
         } else {
           this.materialId = res.data;
           this.form.materialId = this.materialId// 物资id放去申请表单form中
-          
+
           //提交申请表单
           // form中只有userId，materialId，apply_quantity，apply_reason
           request.post("/apply", this.form).then(res => {
@@ -265,7 +306,7 @@ export default {
               this.$message.error("申请失败")
             }
           })
-          
+
         }
       })
     },
@@ -309,24 +350,50 @@ export default {
       this.multipleSelection = val
     },
 
+    /**
+     * 申请物资弹窗
+     * */
+    handleUse(materialId, materialName) {
+      this.UseFormVisible = true
+      this.Useform = {}
+      // 当前用户id放去使用表单Useform中
+      this.Useform.userId = this.userId
+      this.Useform.materialId = materialId
+      this.Useform.materialName = materialName
+    },
 
-    // TODO：删除变成使用
-    // /**
-    //  * 删除用户信息
-    //  * */
-    // del(user_id, material_id) {
-    //   console.log("user_id:", user_id)
-    //   console.log("material_id:", material_id)
-    //   request.post("/user_material/" + user_id + "/" + material_id).then(res => {
-    //     console.log("是否删除:", res)
-    //     if (res.code === "200") {
-    //       this.$message.success("删除成功")
-    //       this.load()
-    //     } else {
-    //       this.$message.error("删除失败")
-    //     }
-    //   })
-    // },
+
+    /**
+     * 使用
+     * */
+    use() {
+      if (!this.Useform.usage_quantity) {
+        this.$message.error("使用数量不能为空")
+        return
+      }
+      if (!this.Useform.usage_reason) {
+        this.$message.error("使用原因不能为空")
+        return
+      }
+      request.post("/user_material/use", null, {
+        params: {
+          userId: this.Useform.userId,
+          materialId: this.Useform.materialId,
+          usage_quantity: this.Useform.usage_quantity,
+          usage_reason: this.Useform.usage_reason
+        }
+      }).then(res => {
+        if (res.code !== "200") {
+          this.$message.error("使用失败,原因：" + res.msg)
+        } else {
+          this.$message.success("使用成功")
+          this.UseFormVisible = false
+
+          this.load()
+        }
+      })
+    },
+
 
     /**
      * 处理分页大小改变
@@ -335,7 +402,8 @@ export default {
       console.log(pageSize)
       this.pageSize = pageSize;
       this.load()
-    },
+    }
+    ,
 
     /**
      * 处理页码改变
@@ -344,7 +412,8 @@ export default {
       console.log(pageNum)
       this.pageNum = pageNum;
       this.load()
-    },
+    }
+    ,
   }
 }
 </script>

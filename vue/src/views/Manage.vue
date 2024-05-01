@@ -1,12 +1,12 @@
 <template>
   <el-container style="min-height: 100vh">
 
-    <el-aside :width="sideWidth + 'px'" style="box-shadow: 2px 0 6px rgb(0 21 41 / 35%);" class="el-aside">
+    <el-aside :width="sideWidth + 'px'" style="box-shadow: 2px 0 6px rgb(0 21 41 / 35%);">
       <Aside :isCollapse="isCollapse" :logoTextShow="logoTextShow"/>
     </el-aside>
 
     <el-container style="margin-left: 200px">
-      <el-header style="border-bottom: 1px solid #ccc;" class="el-header">
+      <el-header style="border-bottom: 1px solid #ccc; margin-right: 100px" class="el-header">
         <Header :collapseBtnClass="collapseBtnClass" :collapse="collapse"/>
       </el-header>
 
@@ -109,17 +109,16 @@ export default {
 <style scoped>
 .el-aside {
   position: fixed;
-  overflow: auto;
   height: 100vh;
+  overflow: auto;
 }
 .el-header {
-  position: fixed;
   width: 100%;
   top: 0;
   z-index: 1000; /* 确保header始终在其他内容之上 */
   background-color: #fff;
 }
 .el-main {
-  margin-top: 60px; /* 这个值应该和你的el-header的高度相同 */
+  //margin-top: 60px; /* 这个值应该和你的el-header的高度相同 */
 }
 </style>

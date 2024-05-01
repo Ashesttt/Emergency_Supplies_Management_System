@@ -4,28 +4,22 @@ import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Data;
-
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.Data;
 
 /**
- * @TableName usage_record
+ * 
+ * @TableName user_usage_record
  */
-@TableName(value = "usage_record")
+@TableName(value ="user_usage_record")
 @Data
-public class UsageRecord implements Serializable {
+public class UserUsageRecord implements Serializable {
     /**
-     * 使用记录id
+     * 用户使用记录
      */
-    @TableId(value = "usage_record_id", type = IdType.AUTO)
-    private Integer usageRecordId;
-
-    /**
-     * 物资id
-     */
-    @TableField(value = "material_id")
-    private Integer materialId;
+    @TableId(value = "user_usage_record_id", type = IdType.AUTO)
+    private Integer userUsageRecordId;
 
     /**
      * 用户id
@@ -34,28 +28,35 @@ public class UsageRecord implements Serializable {
     private Integer userId;
 
     /**
+     * 物资id
+     */
+    @TableField(value = "material_id")
+    private Integer materialId;
+
+    /**
      * 记录时间
      */
     @TableField(value = "record_time")
     private LocalDateTime recordTime;
 
     /**
-     * 使用数量
+     * 用户使用数量
      */
-    @TableField(value = "usage_quantity")
-    private Integer usageQuantity;
-    
+    @TableField(value = "user_usage_quantity")
+    private Integer userUsageQuantity;
+
     /**
-     * 申请使用之前的仓库数量
-     * */
-    @TableField(value = "quantity_before_application")
-    private Integer quantityBeforeApplication;
-    
+     * 使用前个人仓库数量
+     */
+    @TableField(value = "quantity_before_use")
+    private Integer quantityBeforeUse;
+
     /**
-     * 使用原因
+     * 用户使用原因
      */
     @TableField(value = "usage_reason")
     private String usageReason;
+
 
     // 新增字段
     /**
@@ -69,7 +70,7 @@ public class UsageRecord implements Serializable {
      */
     @TableField(exist = false)
     private MaterialType materialType;
-    
+
 
     /**
      * 用户名
@@ -82,7 +83,7 @@ public class UsageRecord implements Serializable {
      */
     @TableField(exist = false)
     private String userRole;
-    
+
     /**
      * 用户头像
      * */
@@ -94,16 +95,4 @@ public class UsageRecord implements Serializable {
      * */
     @TableField(exist = false)
     private String materialUrl;
-
-
-    public void setMaterial(Material material) {
-        this.materialName = material.getMaterialName();
-        this.materialType = material.getMaterialType();
-    }
-
-    public void setUser(User user) {
-        this.userName = user.getUsername();
-        this.userRole = user.getUserRole();
-    }
-
 }

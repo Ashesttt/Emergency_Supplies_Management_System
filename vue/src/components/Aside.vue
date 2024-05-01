@@ -1,5 +1,5 @@
 <template>
-  <el-menu :default-openeds="opens" style="min-height: 100%; overflow-x: hidden"
+  <el-menu :default-openeds="opens" style="min-height: 100%; overflow-x: hidden; overflow-y: hidden;"
            background-color="rgb(48, 65, 86)"
            text-color="#fff"
            active-text-color="#ffd04b"
@@ -57,7 +57,7 @@ export default {
 <style scoped>
 .el-aside {
   position: fixed;
-  overflow: auto;
+  overflow: hidden;
   height: 100vh;
 }
 </style>

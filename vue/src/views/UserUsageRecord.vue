@@ -1,7 +1,6 @@
 <template>
   <div>
-    <div style="margin-bottom: 30px">
-    </div>
+    <div style="margin-bottom: 30px"></div>
 
     <div style="margin: 10px 0">
       <el-input style="width: 200px" placeholder="请输入用户名" suffix-icon="el-icon-search"
@@ -34,18 +33,29 @@
     </div>
 
     <div style="margin: 10px 0">
-      
+      <el-popconfirm
+          class="ml-5"
+          confirm-button-text='确定'
+          cancel-button-text='取消'
+          icon="el-icon-warning"
+          icon-color="red"
+          title="您确定批量删除这些用户使用记录吗？"
+          @confirm="delBatch"
+      >
+        <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
+      </el-popconfirm>
+
     </div>
 
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
-<!--      <el-table-column prop="userId" label="用户id" width="140">-->
-<!--      </el-table-column>-->
-      
-<!--      <el-table-column prop="username" label="用户名">-->
-<!--      </el-table-column>-->
-      <el-table-column prop="avatarurl" label="用户名">
+      <el-table-column prop="userUsageRecordId" label="用户使用记录id">
+      </el-table-column>
+
+      <el-table-column prop="recordTime" label="出库时间" width="150">
+      </el-table-column>
+      <el-table-column prop="avatarurl" label="使用人">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
             <el-image
@@ -56,20 +66,18 @@
             ></el-image>
           </div>
           <div style="display: flex; justify-content: center; align-items: center;">
-            {{ scope.row.username }}
+            {{ scope.row.userName }}
           </div>
         </template>
       </el-table-column>
 
-      <el-table-column prop="userRole" label="用户角色">
+      <el-table-column prop="userRole" label="使用人角色">
+      </el-table-column>
+      
+      <el-table-column prop="usageReason" label="使用原因">
       </el-table-column>
 
-<!--      <el-table-column prop="materialId" label="物资id">-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column prop="materialName" label="物资名称">-->
-<!--      </el-table-column>-->
-      <el-table-column prop="materialUrl" label="物资名称">
+      <el-table-column prop="materialUrl" label="使用物资名称">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
             <el-image
@@ -85,23 +93,24 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="materialType" label="物资类型">
+      <el-table-column prop="materialType" label="使用物资类型">
       </el-table-column>
-      
-      <el-table-column prop="quantity" label="该用户的仓库总量">
+      <el-table-column prop="quantityBeforeUse" label="使用前拥有物资总量">
       </el-table-column>
-      
+      <el-table-column prop="userUsageQuantity" label="使用数量">
+      </el-table-column>
+
 
       <el-table-column label="操作" width="300" align="center">
-        <template slot-scope="scope"> 
+        <template slot-scope="scope">
           <el-popconfirm
               class="ml-5"
               confirm-button-text='确定'
               cancel-button-text='取消'
               icon="el-icon-warning"
               icon-color="red"
-              title="您确定删除这个用户的物资吗？"
-              @confirm="del(scope.row.userId, scope.row.materialId)"
+              title="您确定删除这个用户信息吗？"
+              @confirm="del(scope.row.userUsageRecordId)"
           >
             <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>
           </el-popconfirm>
@@ -126,7 +135,7 @@
 import request from "@/utils/request";
 
 export default {
-  name: "UserMaterial",
+  name: "UserUsageRecord",
   data() {
     return {
       tableData: [],
@@ -135,6 +144,7 @@ export default {
       pageNum: 1,
       pageSize: 10,
       usageRecordId: "",
+      userUsageRecordId: "",
       username: "",
       userRole: "",
       userId: "",
@@ -157,7 +167,7 @@ export default {
       headerBg: "headerBg",
       dialogVisible: false, // 弹窗可视化
       options_userRole: [],
-      options_materialType: [], 
+      options_materialType: [],
     }
   },
   created() {
@@ -169,9 +179,9 @@ export default {
   methods: {
     /**
      * 查询数据方法
-     * */ 
+     * */
     load() {
-      request.get("/user_material/page", {
+      request.get("/userusagerecord/page", {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
@@ -221,7 +231,7 @@ export default {
     async reset() {
       try {
         await this.handle_reset();
-        this.username = "";
+        this.userName = "";
         this.userRole = "";
         this.materialName = "";
         this.materialType = "";
@@ -245,7 +255,23 @@ export default {
             });
       });
     },
-    
+
+
+    /**
+     * 批量删除
+     * */
+    delBatch() {
+      let ids = this.multipleSelection.map(v => v.userUsageRecordId)  // [{}, {}, {}] => [1,2,3]
+      console.log("ids:", ids)
+      request.post("/userusagerecord/del/batch", ids).then(res => {
+        if (res.code === "200") {
+          this.$message.success("批量删除成功")
+          this.load()
+        } else {
+          this.$message.error("批量删除失败,原因：" + res.msg)
+        }
+      })
+    },
 
     /**
      * 处理选中的数据
@@ -258,10 +284,9 @@ export default {
     /**
      * 删除用户信息
      * */
-    del(user_id, material_id) {
-      console.log("user_id:", user_id)
-      console.log("material_id:", material_id)
-      request.post("/user_material/" + user_id + "/" + material_id).then(res => {
+    del(id) {
+      console.log("id:", id)
+      request.delete("/userusagerecord/" + id).then(res => {
         console.log("是否删除:", res)
         if (res.code === "200") {
           this.$message.success("删除成功")

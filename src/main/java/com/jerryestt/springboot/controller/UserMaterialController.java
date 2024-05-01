@@ -2,18 +2,22 @@ package com.jerryestt.springboot.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerryestt.springboot.common.Result;
 import com.jerryestt.springboot.entity.Material;
 import com.jerryestt.springboot.entity.User;
 import com.jerryestt.springboot.entity.UserMaterial;
+import com.jerryestt.springboot.entity.UserUsageRecord;
 import com.jerryestt.springboot.service.IMaterialService;
 import com.jerryestt.springboot.service.IUserService;
 import com.jerryestt.springboot.service.UserMaterialService;
+import com.jerryestt.springboot.service.UserUsageRecordService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +33,10 @@ public class UserMaterialController {
 
     @Resource
     private IUserService userService;
-    
+
+    @Resource
+    private UserUsageRecordService userUsageRecordService;
+
     // 用user_id和material_id删除
     @PostMapping("/{user_id}/{material_id}")
     public Result deleteByUserIdAndMaterialId(@PathVariable Integer user_id, @PathVariable Integer material_id) {
@@ -49,7 +56,7 @@ public class UserMaterialController {
                            @RequestParam(defaultValue = "") String materialType) {
 
         IPage<UserMaterial> page = new Page<>(pageNum, pageSize);
-        
+
         /**
          * 模糊查询
          * */
@@ -98,8 +105,49 @@ public class UserMaterialController {
             record.setMaterialType(material.getMaterialType());
             record.setMaterialUrl(material.getMaterialUrl());
         });
-
-
         return Result.success(userMaterialIPage);
+    }
+
+    // 使用
+    @PostMapping("/use")
+    public Result use(@RequestParam(defaultValue = "") Integer userId,
+                      @RequestParam(defaultValue = "") Integer materialId,
+                      @RequestParam(defaultValue = "") Integer usage_quantity,
+                      @RequestParam(defaultValue = "") String usage_reason) {
+
+        QueryWrapper<UserMaterial> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        queryWrapper.eq("material_id", materialId);
+        UserMaterial userMaterial = userMaterialService.getOne(queryWrapper);
+
+        // 使用前这个用户所拥有该物资的数量
+        int quantity = userMaterial.getQuantity();
+        if (quantity >= usage_quantity) { // 用户拥有的总数大于用户使用的
+            int afteruse = quantity - usage_quantity;
+            userMaterial.setQuantity(afteruse);
+
+            // 没有主键如何更新
+            // 创建一个UpdateWrapper
+            UpdateWrapper<UserMaterial> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("user_id", userId);
+            updateWrapper.eq("material_id", materialId);
+
+            // 使用UpdateWrapper来更新记录
+            userMaterialService.update(userMaterial, updateWrapper);
+
+            // 记录使用记录
+            UserUsageRecord userUsageRecord = new UserUsageRecord();
+            userUsageRecord.setUserId(userId);
+            userUsageRecord.setMaterialId(materialId);
+            userUsageRecord.setQuantityBeforeUse(quantity);// 使用前数量
+            userUsageRecord.setUserUsageQuantity(usage_quantity);// 使用数量
+            userUsageRecord.setUsageReason(usage_reason);// 使用原因
+            LocalDateTime now = LocalDateTime.now();            //获取当前时间
+            userUsageRecord.setRecordTime(now);
+            userUsageRecordService.save(userUsageRecord);
+        } else {
+            return Result.error("用户拥有的总数小于用户使用的");
+        }
+        return Result.success("使用成功");
     }
 }

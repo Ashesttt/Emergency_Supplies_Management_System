@@ -39,7 +39,7 @@
           cancel-button-text='取消'
           icon="el-icon-warning"
           icon-color="red"
-          title="您确定批量删除这些用户信息吗？"
+          title="您确定批量删除这些仓库出库记录吗？"
           @confirm="delBatch"
       >
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
@@ -120,7 +120,7 @@
               cancel-button-text='取消'
               icon="el-icon-warning"
               icon-color="red"
-              title="您确定删除这个用户信息吗？"
+              title="您确定删除这个仓库出库记录吗？"
               @confirm="del(scope.row.usageRecordId)"
           >
             <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>

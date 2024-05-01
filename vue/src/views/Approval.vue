@@ -30,7 +30,7 @@
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="applicationId" label="申请id">
+      <el-table-column prop="applicationId" label="申请id" sortable>
       </el-table-column>
       <el-table-column prop="applyTime" label="申请时间">
       </el-table-column>
@@ -168,6 +168,9 @@ export default {
 
 
   methods: {
+    formatter(row, column) {
+      return row.address;
+    },
     /**
      * 查询数据方法
      * */
