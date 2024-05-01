@@ -111,8 +111,6 @@
           <el-form-item label="申请原因">
             <el-input v-model="form.applyReason" autocomplete="off"></el-input>
           </el-form-item>
-
-
         </el-form>
         <div slot="footer" class="dialog-footer">
           <el-button @click="ApplyFormVisible = false">取 消</el-button>

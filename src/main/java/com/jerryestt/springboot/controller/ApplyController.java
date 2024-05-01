@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
@@ -146,7 +146,7 @@ public class ApplyController {
         // 获取当前的申请状态
         ApprovalStatus CurrentStatus = applyInfo.getApprovalStatus();
         if (ApprovalStatus.Completed.equals(CurrentStatus)) {
-            return Result.success("该申请已完成，请勿重复提交");
+            return Result.success("该申请已完成，请勿重复通过");
         }
         if (ApprovalStatus.Rejected.equals(CurrentStatus)) {
             return Result.error("该申请已被管理员拒绝");
@@ -156,10 +156,12 @@ public class ApplyController {
         }
         if (ApprovalStatus.Pending.equals(CurrentStatus)) {// 如果申请状态是Pending（待审批）
             applyInfo.setApprovalStatus(ApprovalStatus.Processing);// 设置申请状态为Processing（处理中）
+            applyInfo.setApprovalComment("处理中");
         }
         if (ApprovalStatus.InsufficientStock.equals(CurrentStatus)) {
             if (applyQuantity <= quantity) {// 如果申请的数量不大于仓库总量
                 applyInfo.setApprovalStatus(ApprovalStatus.Processing);// 设置申请状态为Processing（处理中）
+                applyInfo.setApprovalComment("处理中");
                 applyService.updateById(applyInfo);
                 return approval(applyInfo);//重新进行函数
             }
@@ -183,8 +185,9 @@ public class ApplyController {
             // 2.接着在material_info表 通过material_id 把申请数量apply_quantity直接拿到后端作比较再更新仓库数量
             if (applyQuantity > quantity) {
                 applyInfo.setApprovalStatus(ApprovalStatus.InsufficientStock);// 设置申请状态为InsufficientStock（库存不足）
+                applyInfo.setApprovalComment("仓库库存不足");
                 applyService.updateById(applyInfo);
-                return Result.error("仓库数量不足");
+                return Result.error("仓库库存不足");
             }
             // 更新后的仓库数量
             quantityAfterUpdate = quantity - applyQuantity;
@@ -248,11 +251,50 @@ public class ApplyController {
         //TODO：(定时预警)把这个预警功能放到一个定时任务里，每天检查一次
         Integer threshold = material.getThreshold();
         if (quantityAfterUpdate < threshold) {
-            System.out.println("仓库数量小于" + threshold + "，需要预警");
-            return Result.success(Constants.SUCCESS_BUT_RUNNING_OUT_OF_MATERIAL, "仓库数量小于" + threshold + "，需要增加库存啦！");
+            applyInfo.setApprovalComment("审批成功，但仓库中的" + material.getMaterialName() + "还剩" + quantityAfterUpdate + "，需要增加库存啦！");
+            applyService.updateById(applyInfo);
+            return Result.success(Constants.SUCCESS_BUT_RUNNING_OUT_OF_MATERIAL, "仓库中的" + material.getMaterialName() + "还剩" + quantityAfterUpdate + "，需要增加库存啦！");
             //TODO：发送邮件
         }
+        applyInfo.setApprovalComment("审批成功");
+        applyService.updateById(applyInfo);
         return Result.success("审批成功");
+    }
+
+    /**
+     * 拒绝
+     */
+    @PutMapping("/reject")
+    public Result reject(@RequestBody Apply apply) {
+        // 获取approvalComment
+        String approvalComment = apply.getApprovalComment();
+        Apply applyInfo = applyService.getById(apply.getApplicationId());
+        ApprovalStatus CurrentStatus = applyInfo.getApprovalStatus();
+        if (ApprovalStatus.InsufficientStock.equals(CurrentStatus)) {
+            return Result.success("库存不足！不能拒绝审批，请补充库存");
+        }
+        if (ApprovalStatus.Completed.equals(CurrentStatus)) {
+            return Result.success("该申请已完成，请勿重复拒绝");
+        }
+        if (ApprovalStatus.Rejected.equals(CurrentStatus)) {
+            return Result.error("该申请已被管理员拒绝，请勿重复点击拒绝");
+        }
+        if (ApprovalStatus.Canceled.equals(CurrentStatus)) {
+            return Result.error("该申请已被用户取消");
+        }
+        if (ApprovalStatus.Pending.equals(CurrentStatus)) {
+            applyInfo.setApprovalStatus(ApprovalStatus.Rejected);
+            if (approvalComment != null) {
+                applyInfo.setApprovalComment(approvalComment);
+            } else {
+                applyInfo.setApprovalComment("已被管理员拒绝");
+            }
+        }
+        // 获取当前时间
+        LocalDateTime date = LocalDateTime.now();
+        applyInfo.setApprovalTime(date);
+        applyService.updateById(applyInfo);
+        return Result.success("已拒绝");
     }
 
 }

@@ -37,9 +37,9 @@
       <el-table-column prop="applyReason" label="申请原因">
       </el-table-column>
       <!--      <el-table-column prop="userId" label="用户id">-->
-<!--            </el-table-column>-->
-<!--      <el-table-column prop="username" label="用户名">-->
-<!--      </el-table-column>-->
+      <!--            </el-table-column>-->
+      <!--      <el-table-column prop="username" label="用户名">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="avatarurl" label="申请人">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
@@ -59,8 +59,8 @@
       <!--      </el-table-column>-->
       <!--      <el-table-column prop="materialId" label="物资id">-->
       <!--      </el-table-column>-->
-<!--      <el-table-column prop="materialName" label="物资名称">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="materialName" label="物资名称">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="materialUrl" label="申请的物资">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
@@ -78,18 +78,19 @@
       </el-table-column>
       <!--      <el-table-column prop="materialType" label="物资类型">-->
       <!--      </el-table-column>-->
-      
+
       <el-table-column prop="applyQuantity" label="申请数量">
       </el-table-column>
       <el-table-column prop="approvalStatus" label="申请状态">
         <!--TODO:通过判断申请状态 显示不同的图标       -->
       </el-table-column>
-      
+      <el-table-column prop="approvalComment" label="审批备注">
+      </el-table-column>
+
       <el-table-column prop="approvalTime" label="审批时间">
       </el-table-column>
 
-
-      <el-table-column label="操作" align="center">
+      <el-table-column label="操作" align="center" width="200px">
         <template slot-scope="scope">
           <el-popconfirm
               class="ml-5"
@@ -103,9 +104,50 @@
             <el-button type="success" slot="reference">通过 <i class="el-icon-circle-check"></i></el-button>
           </el-popconfirm>
 
+          <el-button type="danger" slot="reference" @click="handlereject(scope.row)" class="ml-5">拒绝 <i
+              class="el-icon-circle-close"></i>
+          </el-button>
+
+
         </template>
       </el-table-column>
     </el-table>
+
+    <el-dialog title="拒绝申请" :visible.sync="RejectFormVisible" width="30%">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="申请id">
+          <el-input v-model="Rejectform.applicationId" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="申请时间">
+          <el-input v-model="Rejectform.applyTime" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="申请原因">
+          <el-input v-model="Rejectform.applyReason" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="申请人">
+          <el-input v-model="Rejectform.username" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="申请物资">
+          <el-input v-model="Rejectform.materialName" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="申请数量">
+          <el-input v-model="Rejectform.applyQuantity" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="申请状态">
+          <el-input v-model="Rejectform.approvalStatus" autocomplete="off" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="拒绝原因">
+          <el-input v-model="Rejectform.approvalComment" autocomplete="off"></el-input>
+        </el-form-item>
+
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="RejectFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="reject(Rejectform.approvalComment)">确 定 拒 绝</el-button>
+      </div>
+    </el-dialog>
+    
     <div style="padding: 10px 0">
       <el-pagination
           @size-change="handleSizeChange"
@@ -147,6 +189,7 @@ export default {
       status: "",
       approvalStatus: "",
       form: {},
+      Rejectform: {},
       dialogFormVisible: false,
       multipleSelection: [],
       msg: "hello mxy",
@@ -156,9 +199,11 @@ export default {
       logoTextShow: true, // logo文字是否显示
       headerBg: "headerBg",
       dialogVisible: false, // 弹窗可视化
+      RejectFormVisible: false, //拒绝弹窗可视化
       options_userRole: [],
       options_materialType: [],
       options_approvalStatus: [],
+      approvalComment: "",
     }
   },
   created() {
@@ -263,7 +308,7 @@ export default {
           const h = this.$createElement;
           this.$notify({
             title: '!!!警告!!!',
-            message: h('i', { style: 'color: teal'},res.msg),
+            message: h('i', {style: 'color: teal'}, res.msg),
             type: 'warning',
             duration: 0
           });
@@ -278,6 +323,47 @@ export default {
           this.load()
         }
       })
+    },
+
+
+    /**
+     * 申请物资弹窗
+     * */
+    handlereject(row) {
+      // TODO:把      console.log(JSON.parse(JSON.stringify(row))) 提取成方法
+      console.log(JSON.parse(JSON.stringify(row)))
+      this.RejectFormVisible = true
+      this.Rejectform = {}
+      // 当前用户id放去申请表单form中
+      this.Rejectform.applicationId = row.applicationId
+      this.Rejectform.applyTime = row.applyTime
+      this.Rejectform.applyReason = row.applyReason
+      this.Rejectform.username = row.username
+      this.Rejectform.avatarurl = row.avatarurl
+      this.Rejectform.materialName = row.materialName
+      this.Rejectform.materialUrl = row.materialUrl
+      this.Rejectform.applyQuantity = row.applyQuantity
+      this.Rejectform.approvalStatus = row.approvalStatus
+    },
+    
+
+    /**
+     * 拒绝
+     * */
+    reject(approvalComment) {
+      request.put("/apply/reject", {
+        applicationId: this.Rejectform.applicationId,
+        approvalComment: approvalComment
+      }).then(res => {
+        if (res.code !== "200") {
+          this.$message.error("拒绝失败" + res.msg)
+          this.load()
+        } else {
+          this.$message.success(res.msg)
+          this.load()
+        }
+      })
+      this.RejectFormVisible = false
     },
 
     /**

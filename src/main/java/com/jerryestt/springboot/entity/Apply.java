@@ -64,6 +64,12 @@ public class Apply implements Serializable {
      */
     @TableField(value = "approval_time")
     private LocalDateTime approvalTime;
+    
+    /**
+     * 审批备注
+     * */
+    @TableField(value = "approval_comment")
+    private String approvalComment;
 
     /**
      * 用户名
