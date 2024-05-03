@@ -2,7 +2,6 @@ package com.jerryestt.springboot.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerryestt.springboot.common.Constants;
@@ -35,18 +34,17 @@ public class ApplyController {
     private UsageRecordService usageRecordService;
 
     @Resource
-    private UserMaterialService userMaterialService;
+    private TransportService transportService;
 
     // 新增或更新
     @PostMapping
     public Result save(@RequestBody Apply apply) {
-        // form中只有userId，materialId，apply_quantity，apply_reason
-        // apply_time和approval_status由后端自动生成
         Apply saveapply = new Apply();
         saveapply.setUserId(apply.getUserId());
         saveapply.setMaterialId(apply.getMaterialId());
         saveapply.setApplyQuantity(apply.getApplyQuantity());
         saveapply.setApplyReason(apply.getApplyReason());
+        saveapply.setDestination(apply.getDestination());
         //获取当前时间
         LocalDateTime date = LocalDateTime.now();
         saveapply.setApplyTime(date);
@@ -145,14 +143,20 @@ public class ApplyController {
 
         // 获取当前的申请状态
         ApprovalStatus CurrentStatus = applyInfo.getApprovalStatus();
+        if (ApprovalStatus.Approved.equals(CurrentStatus)) {
+            return Result.success("该申请已通过审批，等待运输分配司机中，请勿重复通过");
+        }
+        if (ApprovalStatus.Transporting.equals(CurrentStatus)) {
+            return Result.success("该申请已在运输中,请勿重复通过");
+        }
         if (ApprovalStatus.Completed.equals(CurrentStatus)) {
             return Result.success("该申请已完成，请勿重复通过");
         }
         if (ApprovalStatus.Rejected.equals(CurrentStatus)) {
-            return Result.error("该申请已被管理员拒绝");
+            return Result.error("该申请已被管理员拒绝，请勿重复通过");
         }
         if (ApprovalStatus.Canceled.equals(CurrentStatus)) {
-            return Result.error("该申请已被用户取消");
+            return Result.error("该申请已被用户取消，请勿重复审批");
         }
         if (ApprovalStatus.Pending.equals(CurrentStatus)) {// 如果申请状态是Pending（待审批）
             applyInfo.setApprovalStatus(ApprovalStatus.Processing);// 设置申请状态为Processing（处理中）
@@ -172,8 +176,8 @@ public class ApplyController {
 //        }
 
         LocalDateTime date = null;//获取当前时间给审批时间approvalTime
+        date = LocalDateTime.now();
         try {
-            date = LocalDateTime.now();
             applyInfo.setApprovalTime(date);
             applyService.updateById(applyInfo);
         } catch (Exception e) {
@@ -197,6 +201,19 @@ public class ApplyController {
             throw new RuntimeException(e);
         }
 
+        // 2.5 新建运输订单
+        Transport transport = new Transport();
+        transport.setMaterialId(applyInfo.getMaterialId());
+        transport.setUserId(applyInfo.getUserId());
+        transport.setQuantity(applyInfo.getApplyQuantity());
+        transport.setDestination(applyInfo.getDestination());
+        transport.setTransportStatus(TransportStatus.Assign);
+        // 获取当前时间
+        transport.setStartTime(date);
+        transportService.save(transport);
+        // 获取运输订单的id,给usage_record表作出库记录用
+        Integer transportId = transport.getTransportId();
+
 
         try {
             // 出库记录
@@ -208,40 +225,44 @@ public class ApplyController {
             usageRecord.setQuantityBeforeApplication(quantity);// 申请使用之前的仓库数量
             usageRecord.setUsageReason(applyInfo.getApplyReason());// 使用原因
             usageRecord.setRecordTime(date);
+            usageRecord.setTransportId(transportId);
             usageRecordService.save(usageRecord);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        //TODO:这个记录到user_material表要等到运输完成后再记录
+
+//        try {
+//            // 记录
+//            // 4.最后去user_material表，通过user_id,material_id,apply_quantity来增加表里的quantity
+//            QueryWrapper<UserMaterial> queryWrapper = new QueryWrapper<>();
+//            queryWrapper.eq("user_id", applyInfo.getUserId());
+//            queryWrapper.eq("material_id", applyInfo.getMaterialId());
+//            UserMaterial userMaterial = userMaterialService.getOne(queryWrapper);
+//            if (userMaterial != null) {
+//                // 如果存在这样的记录，更新它
+//                userMaterial.setQuantity(userMaterial.getQuantity() + applyInfo.getApplyQuantity());
+//                UpdateWrapper<UserMaterial> updateWrapper = new UpdateWrapper<>();
+//                updateWrapper.eq("user_id", userMaterial.getUserId()).eq("material_id", userMaterial.getMaterialId());
+//                userMaterialService.update(userMaterial, updateWrapper);
+//            } else {
+//                // 如果不存在这样的记录，插入一条新的记录
+//                userMaterial = new UserMaterial();
+//                userMaterial.setUserId(applyInfo.getUserId());
+//                userMaterial.setMaterialId(applyInfo.getMaterialId());
+//                userMaterial.setQuantity(applyInfo.getApplyQuantity());
+//                userMaterialService.save(userMaterial);
+//            }
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+
 
         try {
-            // 记录
-            // 4.最后去user_material表，通过user_id,material_id,apply_quantity来增加表里的quantity
-            QueryWrapper<UserMaterial> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("user_id", applyInfo.getUserId());
-            queryWrapper.eq("material_id", applyInfo.getMaterialId());
-            UserMaterial userMaterial = userMaterialService.getOne(queryWrapper);
-            if (userMaterial != null) {
-                // 如果存在这样的记录，更新它
-                userMaterial.setQuantity(userMaterial.getQuantity() + applyInfo.getApplyQuantity());
-                UpdateWrapper<UserMaterial> updateWrapper = new UpdateWrapper<>();
-                updateWrapper.eq("user_id", userMaterial.getUserId()).eq("material_id", userMaterial.getMaterialId());
-                userMaterialService.update(userMaterial, updateWrapper);
-            } else {
-                // 如果不存在这样的记录，插入一条新的记录
-                userMaterial = new UserMaterial();
-                userMaterial.setUserId(applyInfo.getUserId());
-                userMaterial.setMaterialId(applyInfo.getMaterialId());
-                userMaterial.setQuantity(applyInfo.getApplyQuantity());
-                userMaterialService.save(userMaterial);
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-
-        try {
-            // 5.更新申请状态为Completed（已完成）
-            applyInfo.setApprovalStatus(ApprovalStatus.Completed);
+            // 5.更新申请状态为已审批
+            applyInfo.setTransportId(transportId);
+            applyInfo.setApprovalStatus(ApprovalStatus.Approved);
+            applyInfo.setApprovalComment("已通过审批，等待运输分配司机中");
             applyService.updateById(applyInfo);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -256,7 +277,6 @@ public class ApplyController {
             return Result.success(Constants.SUCCESS_BUT_RUNNING_OUT_OF_MATERIAL, "仓库中的" + material.getMaterialName() + "还剩" + quantityAfterUpdate + "，需要增加库存啦！");
             //TODO：发送邮件
         }
-        applyInfo.setApprovalComment("审批成功");
         applyService.updateById(applyInfo);
         return Result.success("审批成功");
     }
@@ -270,6 +290,12 @@ public class ApplyController {
         String approvalComment = apply.getApprovalComment();
         Apply applyInfo = applyService.getById(apply.getApplicationId());
         ApprovalStatus CurrentStatus = applyInfo.getApprovalStatus();
+        if (ApprovalStatus.Approved.equals(CurrentStatus)) {
+            return Result.success("该申请已通过审批，等待运输分配司机中，请勿重复拒绝");
+        }
+        if (ApprovalStatus.Transporting.equals(CurrentStatus)) {
+            return Result.success("该申请已在运输中,请勿重复拒绝");
+        }
         if (ApprovalStatus.InsufficientStock.equals(CurrentStatus)) {
             return Result.success("库存不足！不能拒绝审批，请补充库存");
         }

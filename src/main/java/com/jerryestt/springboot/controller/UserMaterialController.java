@@ -146,7 +146,7 @@ public class UserMaterialController {
             userUsageRecord.setRecordTime(now);
             userUsageRecordService.save(userUsageRecord);
         } else {
-            return Result.error("用户拥有的总数小于用户使用的");
+            return Result.error("您的物资数量不足，无法使用");
         }
         return Result.success("使用成功");
     }

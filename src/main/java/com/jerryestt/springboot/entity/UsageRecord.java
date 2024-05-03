@@ -52,6 +52,12 @@ public class UsageRecord implements Serializable {
     private Integer quantityBeforeApplication;
     
     /**
+     * 运输单号
+     * */
+    @TableField(value = "transport_id")
+    private Integer transportId;
+    
+    /**
      * 使用原因
      */
     @TableField(value = "usage_reason")

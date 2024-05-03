@@ -2,6 +2,9 @@ package com.jerryestt.springboot.mapper;
 
 import com.jerryestt.springboot.entity.Apply;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
 * @author Rick SanChez
@@ -11,6 +14,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 */
 public interface ApplyMapper extends BaseMapper<Apply> {
 
+    @Select("select * from apply_info where transport_id = #{transportId}")
+    Apply selectApplyByTransportId(Integer transportId);
 }
 
 

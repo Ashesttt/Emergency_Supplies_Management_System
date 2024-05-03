@@ -275,4 +275,14 @@ public class UserController {
     }
     
     
+    /**
+     * 获取全部用户角色为Driver的用户
+     * */
+    @GetMapping("/driver")
+    public Result findDriver() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role", "Driver");
+        return Result.success(userService.list(queryWrapper));
+    }
+    
 }

@@ -1,26 +1,19 @@
 <template>
   <div>
-    <div style="margin-bottom: 30px"></div>
+    <div style="margin-bottom: 30px">
+    </div>
 
     <div style="margin: 10px 0">
-      <el-input style="width: 200px" placeholder="请输入用户名" suffix-icon="el-icon-search"
+      <el-input style="width: 200px" placeholder="请输入订单号" suffix-icon="el-icon-search"
+                v-model="transportId"></el-input>
+      <el-input style="width: 200px" placeholder="请输入接收用户名" suffix-icon="el-icon-search" class="ml-5"
                 v-model="username"></el-input>
-      <el-select clearable v-model="userRole" placeholder="请选择用户身份" style="width: 200px"
-                 suffix-icon="el-icon-user" class="ml-5">
-        <el-option
-            v-for="item in options_userRole"
-            :key="item.rolename"
-            :label="item.description"
-            :value="item.rolename">
-          {{ item.description }}({{ item.rolename }})
-        </el-option>
-      </el-select>
       <el-input style="width: 200px" placeholder="请输入物资名字" suffix-icon="el-icon-search" class="ml-5"
                 v-model="materialName"></el-input>
-      <el-select clearable v-model="materialType" placeholder="请选择物资种类" style="width: 200px"
+      <el-select clearable v-model="transportStatus" placeholder="请选择运输状态" style="width: 200px"
                  suffix-icon="el-icon-user" class="ml-5">
         <el-option
-            v-for="item in options_materialType"
+            v-for="item in options_transportStatus"
             :key="item"
             :label="item"
             :value="item">
@@ -33,35 +26,15 @@
     </div>
 
     <div style="margin: 10px 0">
-      <el-popconfirm
-          class="ml-5"
-          confirm-button-text='确定'
-          cancel-button-text='取消'
-          icon="el-icon-warning"
-          icon-color="red"
-          title="您确定批量删除这些仓库出库记录吗？"
-          @confirm="delBatch"
-      >
-        <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
-      </el-popconfirm>
 
     </div>
 
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
-      <el-table-column prop="usageRecordId" label="仓库出库记录id">
+      <el-table-column prop="transportId" label="运输id" sortable>
       </el-table-column>
-
-      <el-table-column prop="recordTime" label="出库时间" width="150">
-      </el-table-column>
-
-<!--      <el-table-column prop="userId" label="申请人id">-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column prop="userName" label="申请人">-->
-<!--      </el-table-column>-->
-      <el-table-column prop="avatarurl" label="申请人">
+      <el-table-column prop="avatarurl" label="接收人">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
             <el-image
@@ -72,23 +45,11 @@
             ></el-image>
           </div>
           <div style="display: flex; justify-content: center; align-items: center;">
-            {{ scope.row.userName }}
+            {{ scope.row.username }}
           </div>
         </template>
       </el-table-column>
-
-      <el-table-column prop="userRole" label="申请人角色">
-      </el-table-column>
-      
-      <el-table-column prop="usageReason" label="申请原因">
-      </el-table-column>
-
-<!--      <el-table-column prop="materialId" label="出库物资id">-->
-<!--      </el-table-column>-->
-
-<!--      <el-table-column prop="materialName" label="出库物资名称">-->
-<!--      </el-table-column>-->
-      <el-table-column prop="materialUrl" label="出库物资名称">
+      <el-table-column prop="materialUrl" label="运送的物资">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
             <el-image
@@ -103,33 +64,28 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column prop="quantity" label="物资数量">
+      </el-table-column>
+      <el-table-column prop="transportStatus" label="运输状态">
+      </el-table-column>
+      <el-table-column prop="destination" label="目的地">
+      </el-table-column>
+      <el-table-column prop="startTime" label="订单开始时间">
+      </el-table-column>
+      <el-table-column prop="endTime" label="订单结束时间" width="150px">
+      </el-table-column>
 
-      <el-table-column prop="materialType" label="出库物资类型">
-      </el-table-column>
-      <el-table-column prop="quantityBeforeApplication" label="出库前仓库总量">
-      </el-table-column>
-      <el-table-column prop="usageQuantity" label="出库数量">
-      </el-table-column>
-      <el-table-column prop="transportId" label="运输单号">
-      </el-table-column>
 
-
-      <el-table-column label="操作" width="300" align="center">
+      <el-table-column label="操作" align="center" width="200px">
         <template slot-scope="scope">
-          <el-popconfirm
-              class="ml-5"
-              confirm-button-text='确定'
-              cancel-button-text='取消'
-              icon="el-icon-warning"
-              icon-color="red"
-              title="您确定删除这个仓库出库记录吗？"
-              @confirm="del(scope.row.usageRecordId)"
-          >
-            <el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i></el-button>
-          </el-popconfirm>
+          <el-button type="success" slot="reference" @click="Arrive(scope.row)">已到达 <i
+              class="el-icon-circle-check"></i>
+          </el-button>
         </template>
       </el-table-column>
     </el-table>
+
+
     <div style="padding: 10px 0">
       <el-pagination
           @size-change="handleSizeChange"
@@ -148,7 +104,7 @@
 import request from "@/utils/request";
 
 export default {
-  name: "Material.vue",
+  name: "Driver",
   data() {
     return {
       tableData: [],
@@ -157,6 +113,7 @@ export default {
       pageNum: 1,
       pageSize: 10,
       usageRecordId: "",
+      applicationId: "",
       username: "",
       userRole: "",
       userId: "",
@@ -168,7 +125,10 @@ export default {
       productionDate: "",
       expiryDate: "",
       status: "",
+      approvalStatus: "",
+      driverAvatarurl: "",
       form: {},
+      Rejectform: {},
       dialogFormVisible: false,
       multipleSelection: [],
       msg: "hello mxy",
@@ -177,14 +137,21 @@ export default {
       sideWidth: 200,
       logoTextShow: true, // logo文字是否显示
       headerBg: "headerBg",
-      dialogVisible: false, // 弹窗可视化
-      options_userRole: [],
-      options_materialType: [],
+      AssignDriverFormVisible: false, //分配司机弹窗可视化
+      options_transportStatus: [],
+      transportStatus: "",
+      driverName: "",
+      transportId: "",
+      Assignform: {},
+      options_driver: [],
+      driver: "",
+      driverId: "",
     }
   },
   created() {
     // 请求分页查询数据
-    this.load()
+    let user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {};
+    this.load(user)
   },
 
 
@@ -192,18 +159,19 @@ export default {
     /**
      * 查询数据方法
      * */
-    load() {
-      request.get("/usagerecord/page", {
+    load(user) {
+      request.get("/transport/page", {
         params: {
           pageNum: this.pageNum,
           pageSize: this.pageSize,
+          transportId: this.transportId,
           username: this.username,
-          userRole: this.userRole,
           materialName: this.materialName,
-          materialType: this.materialType,
+          driverName: user.username,
+          transportStatus: this.transportStatus
         }
       }).then(res => {
-        console.log(res)
+        console.log(JSON.parse(JSON.stringify(res)))
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
@@ -211,27 +179,15 @@ export default {
         this.total = res.data.total;
       })
 
-
       /**
-       * 获取物资类型
+       * 获取所有申请状态
        * */
-      request.get("/material/materialType").then(res => {
+      request.get("/transport/transportStatus").then(res => {
         console.log("res:", res)
         if (res.code !== "200") {
           this.$message.error("获取失败,原因：" + res.msg)
         } else {
-          this.options_materialType = res.data;
-        }
-      })
-
-      /**
-       * 获取搜索栏的role身份选择
-       * */
-      request.get("/role").then(res => {
-        console.log(res)
-        if (res.code === "200") {
-          this.options_userRole = res.data;
-          console.log("this.options：" + this.options)
+          this.options_transportStatus = res.data;
         }
       })
     },
@@ -243,10 +199,10 @@ export default {
     async reset() {
       try {
         await this.handle_reset();
-        this.userName = "";
-        this.userRole = "";
+        this.transportId = "";
+        this.username = "";
         this.materialName = "";
-        this.materialType = "";
+        this.transportStatus = "";
         this.load();
       } catch (error) {
         // 用户点击了取消，所以不执行任何操作
@@ -268,22 +224,29 @@ export default {
       });
     },
 
-
     /**
-     * 批量删除
+     * 已到达
      * */
-    delBatch() {
-      let ids = this.multipleSelection.map(v => v.usageRecordId)  // [{}, {}, {}] => [1,2,3]
-      console.log("ids:", ids)
-      request.post("/usagerecord/del/batch", ids).then(res => {
-        if (res.code === "200") {
-          this.$message.success("批量删除成功")
-          this.load()
-        } else {
-          this.$message.error("批量删除失败,原因：" + res.msg)
-        }
-      })
+    Arrive(row) {
+      console.log("row:", row)
+      this.$confirm('确认已到达？')
+          .then(_ => {
+            request.put("/transport/arrive", {
+              transportId: row.transportId
+            }).then(res => {
+              if (res.code !== "200") {
+                this.$message.error("操作失败,原因：" + res.msg)
+              } else {
+                this.$message.success("操作成功")
+                this.load()
+              }
+            })
+          })
+          .catch(_ => {
+            this.$message.info('已取消操作');
+          });
     },
+
 
     /**
      * 处理选中的数据
@@ -291,22 +254,6 @@ export default {
     handleSelectionChange(val) {
       console.log("val:", val)
       this.multipleSelection = val
-    },
-
-    /**
-     * 删除用户信息
-     * */
-    del(id) {
-      console.log("id:", id)
-      request.delete("/usagerecord/" + id).then(res => {
-        console.log("是否删除:", res)
-        if (res.code === "200") {
-          this.$message.success("删除成功")
-          this.load()
-        } else {
-          this.$message.error("删除失败")
-        }
-      })
     },
 
     /**

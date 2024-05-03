@@ -70,6 +70,20 @@ public class Apply implements Serializable {
      * */
     @TableField(value = "approval_comment")
     private String approvalComment;
+    
+    /**
+     * 发送的目的地
+     * */
+    @TableField(value = "destination")
+    private String destination;
+    
+    /**
+     * 运输单号id
+     */
+    @TableField(value = "transport_id")
+    private Integer transportId;
+    
+    
 
     /**
      * 用户名

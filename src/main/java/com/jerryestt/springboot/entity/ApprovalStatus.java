@@ -8,4 +8,5 @@ public enum ApprovalStatus {
     Completed,// 完成
     Processing,// 处理中
     InsufficientStock,// 库存不足
+    Transporting,// 运输中
 }

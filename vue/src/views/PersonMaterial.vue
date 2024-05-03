@@ -4,7 +4,7 @@
     </div>
 
     <div style="margin: 10px 0">
-      <el-input style="width: 200px" placeholder="请输入物资名字" suffix-icon="el-icon-search" class="ml-5"
+      <el-input style="width: 200px" placeholder="请输入物资名字" suffix-icon="el-icon-search"
                 v-model="materialName"></el-input>
       <el-select clearable v-model="materialType" placeholder="请选择物资种类" style="width: 200px"
                  suffix-icon="el-icon-user" class="ml-5">
@@ -92,7 +92,7 @@
 
 
       <el-dialog title="申请物资" :visible.sync="ApplyFormVisible" width="30%">
-        <el-form label-width="80px" size="small">
+        <el-form label-width="90px" size="small">
           <el-form-item label="物资名字">
             <el-select clearable v-model="damn.materialName" placeholder="请选择物资名字" style="width: 100%">
               <el-option
@@ -110,6 +110,9 @@
           </el-form-item>
           <el-form-item label="申请原因">
             <el-input v-model="form.applyReason" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="运输目的地">
+            <el-input v-model="form.destination" autocomplete="off"></el-input>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -200,6 +203,8 @@ export default {
         this.$message.error("获取失败,原因：" + res.msg)
       } else {
         this.userId = res.data.userId;
+        this.address = res.data.address;
+        console.log("res:", res)
       }
     })
     // 请求分页查询数据
@@ -262,6 +267,9 @@ export default {
       this.form = {}
       // 当前用户id放去申请表单form中
       this.form.userId = this.userId
+      // 直接把地址赋值给目的地
+      // this.form.destination = this.address
+      this.$set(this.form, 'destination', this.address);
     },
 
     /**
