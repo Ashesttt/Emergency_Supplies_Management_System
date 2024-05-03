@@ -122,6 +122,9 @@ public class UserMaterialController {
 
         // 使用前这个用户所拥有该物资的数量
         int quantity = userMaterial.getQuantity();
+        if (quantity < 0) {
+            return Result.error("您的物资数量不足，无法使用");
+        }
         if (quantity >= usage_quantity) { // 用户拥有的总数大于用户使用的
             int afteruse = quantity - usage_quantity;
             userMaterial.setQuantity(afteruse);

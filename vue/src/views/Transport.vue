@@ -19,7 +19,11 @@
             :key="item"
             :label="item"
             :value="item">
-          {{ item }}
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_transportStatus(item)" style="font-size: 25px"></i>
+            {{ item }}
+            <!--            <i :class="icon_transportStatus(item)" style="font-size: 25px"></i>-->
+          </div>
         </el-option>
       </el-select>
 
@@ -88,6 +92,13 @@
         </template>
       </el-table-column>
       <el-table-column prop="transportStatus" label="运输状态">
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_transportStatus(scope.row.transportStatus)" style="font-size: 25px"></i>
+            {{ scope.row.transportStatus }}
+            <!--            <i :class="icon_transportStatus(scope.row.transportStatus)" style="font-size: 25px"></i>-->
+          </div>
+        </template>
       </el-table-column>
       <el-table-column prop="destination" label="目的地">
       </el-table-column>
@@ -210,8 +221,14 @@ export default {
     }
   },
   created() {
-    // 请求分页查询数据
-    this.load()
+    // 获取查询参数
+    const transportId = this.$route.query.transportId;
+
+    // 如果有 materialName 参数，使用它来过滤出库记录
+    if (transportId) {
+      this.transportId = transportId;
+    }
+    this.load();
   },
 
 
@@ -235,6 +252,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -265,6 +283,21 @@ export default {
       })
     },
 
+    /**
+     * 根据icon_transportStatus返回不同的图标
+     * */
+    icon_transportStatus(transportStatus) {
+      if (transportStatus === "Transporting") {
+        return "icon_Transporting"
+      } else if (transportStatus === "Arrived") {
+        return "icon_Arrived"
+      } else if (transportStatus === "Assign") {
+        return "icon_Assign"
+      } else {
+        return "icon_Unknow"
+      }
+    },
+
 
     /**
      * 重置查询条件
@@ -278,6 +311,8 @@ export default {
         this.driverName = "";
         this.transportStatus = "";
         this.load();
+        // 清除 URL 中的 materialName 参数
+        this.$router.push({path: '/transport'});
       } catch (error) {
         // 用户点击了取消，所以不执行任何操作
       }
@@ -320,13 +355,14 @@ export default {
      * */
     Assign(driver) {
       let driverId = driver.userId
+      let transportId = this.transportId
       console.log("this.Assignform:", this.Assignform)
       if (driver.userId === "") {
         this.$message.error("请选择司机")
         return
       }
       request.post("/transport/assign", {
-        transportId: this.transportId,
+        transportId: transportId,
         driverId: driverId
       }).then(res => {
         if (res.code !== "200") {

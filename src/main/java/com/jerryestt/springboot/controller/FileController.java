@@ -143,7 +143,6 @@ public class FileController {
     @DeleteMapping("/{id}")
     public Result delete(@PathVariable Integer id) {
         Files files = fileMapper.selectById(id);
-//        TODO:不知道为什么这里会报错，files.getIs_delete()返回的是null，但是数据库中的is_delete字段是有值的
 //        boolean isDelete_status = files.getIs_delete();
 //        System.out.println(isDelete_status);
         files.setIs_delete(true);// 设置为删除状态

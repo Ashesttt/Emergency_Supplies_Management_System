@@ -15,7 +15,11 @@
             :key="item"
             :label="item"
             :value="item">
-          {{ item }}
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_approvalStatus(item)" style="font-size: 25px"></i>
+            {{ item }}
+            <!--            <i :class="icon_approvalStatus(item)" style="font-size: 25px"></i>-->
+          </div>
         </el-option>
       </el-select>
 
@@ -68,8 +72,14 @@
       </el-table-column>
       <el-table-column prop="applyQuantity" label="申请数量">
       </el-table-column>
-      <el-table-column prop="approvalStatus" label="申请状态">
-        <!--TODO:通过判断申请状态 显示不同的图标       -->
+      <el-table-column prop="approvalStatus" label="申请状态" width="180px">
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_approvalStatus(scope.row.approvalStatus)" style="font-size: 25px"></i>
+            {{ scope.row.approvalStatus }}
+            <!--            <i :class="icon_approvalStatus(scope.row.approvalStatus)" style="font-size: 25px"></i>-->
+          </div>
+        </template>
       </el-table-column>
       <el-table-column prop="transportId" label="运输单号">
       </el-table-column>
@@ -79,9 +89,9 @@
       </el-table-column>
       <el-table-column prop="approvalTime" label="审批时间" width="150px">
       </el-table-column>
-      
 
-      <el-table-column label="操作" align="center" width="200px">
+
+      <el-table-column label="操作" align="center" width="300px">
         <template slot-scope="scope">
           <el-popconfirm
               class="ml-5"
@@ -98,7 +108,8 @@
           <el-button type="danger" slot="reference" @click="handlereject(scope.row)" class="ml-5">拒绝 <i
               class="el-icon-circle-close"></i>
           </el-button>
-
+          <el-button type="primary" @click="viewRecord(scope.row.transportId)">运输订单 <i
+              class="el-icon-receiving"></i></el-button>
 
         </template>
       </el-table-column>
@@ -138,7 +149,7 @@
         <el-button type="primary" @click="reject(Rejectform.approvalComment)">确 定 拒 绝</el-button>
       </div>
     </el-dialog>
-    
+
     <div style="padding: 10px 0">
       <el-pagination
           @size-change="handleSizeChange"
@@ -224,6 +235,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -240,6 +252,31 @@ export default {
         }
       })
 
+    },
+
+    /**
+     * 用approvalStatus来返回对应的图标
+     * */
+    icon_approvalStatus(approvalStatus) {
+      if (approvalStatus === "Pending") {
+        return "el-icon-loading"
+      } else if (approvalStatus === "Approved") {
+        return "icon_Approved"
+      } else if (approvalStatus === "Rejected") {
+        return "icon_Rejected"
+      } else if (approvalStatus === "Canceled") {
+        return "icon_Canceled"
+      } else if (approvalStatus === "Completed") {
+        return "icon_Completed"
+      } else if (approvalStatus === "Processing") {
+        return "icon_Processing"
+      } else if (approvalStatus === "InsufficientStock") {
+        return "icon_InsufficientStock"
+      } else if (approvalStatus === "Transporting") {
+        return "icon_Transporting"
+      } else {
+        return "icon_Unknow"
+      }
     },
 
 
@@ -321,8 +358,8 @@ export default {
      * 申请物资弹窗
      * */
     handlereject(row) {
-      // TODO:把      console.log(JSON.parse(JSON.stringify(row))) 提取成方法
       console.log(JSON.parse(JSON.stringify(row)))
+      this.consoleLog(row)
       this.RejectFormVisible = true
       this.Rejectform = {}
       // 当前用户id放去申请表单form中
@@ -336,7 +373,7 @@ export default {
       this.Rejectform.applyQuantity = row.applyQuantity
       this.Rejectform.approvalStatus = row.approvalStatus
     },
-    
+
 
     /**
      * 拒绝
@@ -358,13 +395,31 @@ export default {
     },
 
     /**
+     * 跳转到对应的运输订单
+     * */
+    viewRecord(transportId) {
+      if (transportId === null || transportId === "") {
+        this.$message.error("运输单号为空")
+        return
+      }
+      this.$router.push({
+        path: "/transport",
+        query: {
+          transportId: transportId
+        }
+      })
+    },
+
+
+    /**
      * 处理分页大小改变
      **/
     handleSizeChange(pageSize) {
       console.log(pageSize)
       this.pageSize = pageSize;
       this.load()
-    },
+    }
+    ,
 
     /**
      * 处理页码改变
@@ -373,7 +428,8 @@ export default {
       console.log(pageNum)
       this.pageNum = pageNum;
       this.load()
-    },
+    }
+    ,
   }
 }
 </script>

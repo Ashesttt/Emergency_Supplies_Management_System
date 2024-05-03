@@ -24,7 +24,11 @@
             :key="item"
             :label="item"
             :value="item">
-          {{ item }}
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_materialType(item)" style="font-size: 25px"></i>
+            {{ item }}
+            <!--            <i :class="icon_materialType(item)" style="font-size: 25px"></i>-->
+          </div>
         </el-option>
       </el-select>
 
@@ -73,7 +77,7 @@
 
       <el-table-column prop="userRole" label="使用人角色">
       </el-table-column>
-      
+
       <el-table-column prop="usageReason" label="使用原因">
       </el-table-column>
 
@@ -94,6 +98,13 @@
       </el-table-column>
 
       <el-table-column prop="materialType" label="使用物资类型">
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_materialType(scope.row.materialType)" style="font-size: 25px"></i>
+            {{ scope.row.materialType }}
+            <!--            <i :class="icon_materialType(scope.row.materialType)" style="font-size: 25px"></i>-->
+          </div>
+        </template>
       </el-table-column>
       <el-table-column prop="quantityBeforeUse" label="使用前拥有物资总量">
       </el-table-column>
@@ -195,6 +206,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -222,6 +234,27 @@ export default {
           console.log("this.options：" + this.options)
         }
       })
+    },
+
+    /**
+     * 物资类型图标
+     * */
+    icon_materialType(materialType) {
+      if (materialType === "Medical") {
+        return "icon_Medical"
+      } else if (materialType === "Fire_Rescue") {
+        return "icon_Fire_Rescue"
+      } else if (materialType === "Protection") {
+        return "icon_Protection"
+      } else if (materialType === "Communication") {
+        return "icon_Communication"
+      } else if (materialType === "Alarm") {
+        return "icon_Alarm"
+      } else if (materialType === "Engineering_Rescue") {
+        return "icon_Engineering_Rescue"
+      } else {
+        return "el-icon-loading"
+      }
     },
 
 

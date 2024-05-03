@@ -175,6 +175,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -238,8 +239,8 @@ export default {
                 this.$message.error("操作失败,原因：" + res.msg)
               } else {
                 this.$message.success("操作成功")
-                this.load()
               }
+              this.load()
             })
           })
           .catch(_ => {

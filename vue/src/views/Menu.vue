@@ -160,6 +160,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data;
       })
     },

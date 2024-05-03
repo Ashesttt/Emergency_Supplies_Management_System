@@ -20,3 +20,14 @@ new Vue({
     store,
     render: h => h(App)
 }).$mount('#app')
+
+
+Vue.mixin(
+    {
+        methods: {
+            consoleLog(res) {
+                console.log(JSON.parse(JSON.stringify(res)));
+            }
+        }
+    }
+)

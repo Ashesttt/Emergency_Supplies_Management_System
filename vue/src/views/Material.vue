@@ -14,7 +14,11 @@
             :key="item"
             :label="item"
             :value="item">
-          {{ item }}
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_materialType(item)" style="font-size: 25px"></i>
+            {{ item }}
+            <!--            <i :class="icon_materialType(item)" style="font-size: 25px"></i>-->
+          </div>
         </el-option>
       </el-select>
       <el-select clearable v-model="status" placeholder="请选择物资状态" style="width: 200px"
@@ -68,7 +72,14 @@
 
       <el-table-column prop="materialName" label="物资名字">
       </el-table-column>
-      <el-table-column prop="materialType" label="物资类型">
+      <el-table-column prop="materialType" label="物资类型" width="180px">
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_materialType(scope.row.materialType)" style="font-size: 25px"></i>
+            {{ scope.row.materialType }}
+            <!--            <i :class="icon_materialType(scope.row.materialType)" style="font-size: 25px"></i>-->
+          </div>
+        </template>
       </el-table-column>
       <el-table-column prop="quantity" label="数量">
       </el-table-column>
@@ -84,8 +95,8 @@
 
       <el-table-column label="操作" width="300" align="center">
         <template slot-scope="scope">
-          <!-- TODO:查看记录         -->
-          <!--          <el-button type="success" @click="handleEdit(scope.row)">查看记录 <i class="el-icon-receiving"></i></el-button>-->
+          <el-button type="primary" @click="viewRecord(scope.row.materialName)">出库记录 <i
+              class="el-icon-receiving"></i></el-button>
           <el-button type="success" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
           <el-popconfirm
               class="ml-5"
@@ -237,6 +248,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -268,10 +280,31 @@ export default {
     },
 
     /**
-     *
+     * 处理物资图片上传成功
      * */
     handlematerialUrlSuccess(res) {
       this.form.materialUrl = res
+    },
+
+    /**
+     * 物资类型图标
+     * */
+    icon_materialType(materialType) {
+      if (materialType === "Medical") {
+        return "icon_Medical"
+      } else if (materialType === "Fire_Rescue") {
+        return "icon_Fire_Rescue"
+      } else if (materialType === "Protection") {
+        return "icon_Protection"
+      } else if (materialType === "Communication") {
+        return "icon_Communication"
+      } else if (materialType === "Alarm") {
+        return "icon_Alarm"
+      } else if (materialType === "Engineering_Rescue") {
+        return "icon_Engineering_Rescue"
+      } else {
+        return "el-icon-loading"
+      }
     },
 
 
@@ -288,7 +321,8 @@ export default {
       } catch (error) {
         // 用户点击了取消，所以不执行任何操作
       }
-    },
+    }
+    ,
 
     /**
      * 是否重置弹窗弹窗
@@ -303,7 +337,8 @@ export default {
               reject();
             });
       });
-    },
+    }
+    ,
 
     /**
      * 新增物资信息
@@ -311,7 +346,8 @@ export default {
     handleAdd() {
       this.dialogFormVisible = true
       this.form = {}
-    },
+    }
+    ,
 
     /**
      * 批量删除
@@ -327,7 +363,8 @@ export default {
           this.$message.error("批量删除失败,原因：" + res.msg)
         }
       })
-    },
+    }
+    ,
 
     /**
      * 处理选中的数据
@@ -337,13 +374,23 @@ export default {
       this.multipleSelection = val
     },
 
+
+    /**
+     * 跳转到物资出库记录页面
+     * */
+    viewRecord(materialName) {
+      this.$router.push({path: '/usage_record', query: {materialName: materialName}});
+    },
+
+
     /**
      * 编辑物资信息
      * */
     handleEdit(row) {
       this.form = row
       this.dialogFormVisible = true
-    },
+    }
+    ,
 
 
     /**
@@ -360,7 +407,8 @@ export default {
           this.$message.error("删除失败")
         }
       })
-    },
+    }
+    ,
 
     /**
      * 处理分页大小改变
@@ -369,7 +417,8 @@ export default {
       console.log(pageSize)
       this.pageSize = pageSize;
       this.load()
-    },
+    }
+    ,
 
     /**
      * 处理页码改变
@@ -378,7 +427,8 @@ export default {
       console.log(pageNum)
       this.pageNum = pageNum;
       this.load()
-    },
+    }
+    ,
 
     /**
      * 保存用户信息
@@ -387,13 +437,14 @@ export default {
       request.post("/material", this.form).then(res => {
         if (res.code !== "200") {
           this.$message.error("保存失败")
-          this.load()
         } else {
           this.$message.success("保存成功")
           this.dialogFormVisible = false
         }
+        this.load()
       })
-    },
+    }
+    ,
 
   }
 }

@@ -24,7 +24,11 @@
             :key="item"
             :label="item"
             :value="item">
-          {{ item }}
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_materialType(item)" style="font-size: 25px"></i>
+            {{ item }}
+            <!--            <i :class="icon_materialType(item)" style="font-size: 25px"></i>-->
+          </div>
         </el-option>
       </el-select>
 
@@ -56,11 +60,11 @@
       <el-table-column prop="recordTime" label="出库时间" width="150">
       </el-table-column>
 
-<!--      <el-table-column prop="userId" label="申请人id">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="userId" label="申请人id">-->
+      <!--      </el-table-column>-->
 
-<!--      <el-table-column prop="userName" label="申请人">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="userName" label="申请人">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="avatarurl" label="申请人">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
@@ -79,15 +83,15 @@
 
       <el-table-column prop="userRole" label="申请人角色">
       </el-table-column>
-      
+
       <el-table-column prop="usageReason" label="申请原因">
       </el-table-column>
 
-<!--      <el-table-column prop="materialId" label="出库物资id">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="materialId" label="出库物资id">-->
+      <!--      </el-table-column>-->
 
-<!--      <el-table-column prop="materialName" label="出库物资名称">-->
-<!--      </el-table-column>-->
+      <!--      <el-table-column prop="materialName" label="出库物资名称">-->
+      <!--      </el-table-column>-->
       <el-table-column prop="materialUrl" label="出库物资名称">
         <template slot-scope="scope">
           <div style="display: flex; justify-content: center; align-items: center;">
@@ -105,6 +109,13 @@
       </el-table-column>
 
       <el-table-column prop="materialType" label="出库物资类型">
+        <template slot-scope="scope">
+          <div style="display: flex; align-items: center;">
+            <i :class="icon_materialType(scope.row.materialType)" style="font-size: 25px"></i>
+            {{ scope.row.materialType }}
+            <!--            <i :class="icon_materialType(scope.row.materialType)" style="font-size: 25px"></i>-->
+          </div>
+        </template>
       </el-table-column>
       <el-table-column prop="quantityBeforeApplication" label="出库前仓库总量">
       </el-table-column>
@@ -183,8 +194,15 @@ export default {
     }
   },
   created() {
-    // 请求分页查询数据
-    this.load()
+    // 获取查询参数
+    const materialName = this.$route.query.materialName;
+
+    // 如果有 materialName 参数，使用它来过滤出库记录
+    if (materialName) {
+      this.materialName = materialName;
+    }
+    this.load();
+
   },
 
 
@@ -207,6 +225,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
+        this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -236,6 +255,27 @@ export default {
       })
     },
 
+    /**
+     * 物资类型图标
+     * */
+    icon_materialType(materialType) {
+      if (materialType === "Medical") {
+        return "icon_Medical"
+      } else if (materialType === "Fire_Rescue") {
+        return "icon_Fire_Rescue"
+      } else if (materialType === "Protection") {
+        return "icon_Protection"
+      } else if (materialType === "Communication") {
+        return "icon_Communication"
+      } else if (materialType === "Alarm") {
+        return "icon_Alarm"
+      } else if (materialType === "Engineering_Rescue") {
+        return "icon_Engineering_Rescue"
+      } else {
+        return "el-icon-loading"
+      }
+    },
+
 
     /**
      * 重置查询条件
@@ -248,6 +288,8 @@ export default {
         this.materialName = "";
         this.materialType = "";
         this.load();
+        // 清除 URL 中的 materialName 参数
+        this.$router.push({path: '/usage_record'});
       } catch (error) {
         // 用户点击了取消，所以不执行任何操作
       }

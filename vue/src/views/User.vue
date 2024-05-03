@@ -52,7 +52,6 @@
       <el-button type="primary" @click="exp" class="ml-5">导出 <i class="el-icon-top"></i></el-button>
     </div>
 
-    <!--TODO: 排序:userId和createTime -->
     <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
               @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55"></el-table-column>
@@ -74,7 +73,7 @@
       </el-table-column>
       <el-table-column prop="password" label="密码" width="140">
       </el-table-column>
-      <el-table-column prop="userRole" label="用户身份" width="120">
+      <el-table-column prop="userRole" label="用户身份" width="120" sortable>
       </el-table-column>
       <el-table-column prop="email" label="邮箱" width="140">
       </el-table-column>
@@ -82,7 +81,7 @@
       </el-table-column>
       <el-table-column prop="address" label="地址">
       </el-table-column>
-      <el-table-column prop="createTime" label="创建时间" width="220">
+      <el-table-column prop="createTime" label="创建时间" width="220" sortable>
       </el-table-column>
       <el-table-column label="操作" width="200" align="center">
         <template slot-scope="scope">
@@ -208,11 +207,13 @@ export default {
         }
       }).then(res => {
         console.log(res)
-        // if (res.code !== "200") {
-        //   this.$message.error(res.msg)
-        // }
-        this.tableData = res.data.records;
-        this.total = res.data.total;
+        if (res.code !== "200") {
+          this.$message.error(res.msg)
+        }else {
+          this.$message.success("查询成功")
+          this.tableData = res.data.records;
+          this.total = res.data.total;
+        }
       })
 
       /**

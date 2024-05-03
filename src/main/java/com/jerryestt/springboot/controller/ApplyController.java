@@ -39,10 +39,15 @@ public class ApplyController {
     // 新增或更新
     @PostMapping
     public Result save(@RequestBody Apply apply) {
+        Integer applyQuantity = apply.getApplyQuantity();
+        if (applyQuantity <= 0) {
+            return Result.error("申请数量不能小于等于0");
+        }
+        
         Apply saveapply = new Apply();
         saveapply.setUserId(apply.getUserId());
         saveapply.setMaterialId(apply.getMaterialId());
-        saveapply.setApplyQuantity(apply.getApplyQuantity());
+        saveapply.setApplyQuantity(applyQuantity);
         saveapply.setApplyReason(apply.getApplyReason());
         saveapply.setDestination(apply.getDestination());
         //获取当前时间
@@ -230,33 +235,7 @@ public class ApplyController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        //TODO:这个记录到user_material表要等到运输完成后再记录
-
-//        try {
-//            // 记录
-//            // 4.最后去user_material表，通过user_id,material_id,apply_quantity来增加表里的quantity
-//            QueryWrapper<UserMaterial> queryWrapper = new QueryWrapper<>();
-//            queryWrapper.eq("user_id", applyInfo.getUserId());
-//            queryWrapper.eq("material_id", applyInfo.getMaterialId());
-//            UserMaterial userMaterial = userMaterialService.getOne(queryWrapper);
-//            if (userMaterial != null) {
-//                // 如果存在这样的记录，更新它
-//                userMaterial.setQuantity(userMaterial.getQuantity() + applyInfo.getApplyQuantity());
-//                UpdateWrapper<UserMaterial> updateWrapper = new UpdateWrapper<>();
-//                updateWrapper.eq("user_id", userMaterial.getUserId()).eq("material_id", userMaterial.getMaterialId());
-//                userMaterialService.update(userMaterial, updateWrapper);
-//            } else {
-//                // 如果不存在这样的记录，插入一条新的记录
-//                userMaterial = new UserMaterial();
-//                userMaterial.setUserId(applyInfo.getUserId());
-//                userMaterial.setMaterialId(applyInfo.getMaterialId());
-//                userMaterial.setQuantity(applyInfo.getApplyQuantity());
-//                userMaterialService.save(userMaterial);
-//            }
-//        } catch (Exception e) {
-//            throw new RuntimeException(e);
-//        }
-
+        
 
         try {
             // 5.更新申请状态为已审批
