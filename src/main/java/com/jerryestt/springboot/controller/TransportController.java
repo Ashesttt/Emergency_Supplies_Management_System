@@ -8,10 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerryestt.springboot.common.Result;
 import com.jerryestt.springboot.entity.*;
 import com.jerryestt.springboot.mapper.ApplyMapper;
-import com.jerryestt.springboot.service.IMaterialService;
-import com.jerryestt.springboot.service.IUserService;
-import com.jerryestt.springboot.service.TransportService;
-import com.jerryestt.springboot.service.UserMaterialService;
+import com.jerryestt.springboot.service.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -39,6 +36,9 @@ public class TransportController {
     
     @Resource
     private UserMaterialService userMaterialService;
+    
+    @Resource
+    private MessageService messageService;
 
     //分页查询
     @GetMapping("/page")
@@ -142,17 +142,38 @@ public class TransportController {
         if (TransportStatus.Arrived.equals(currentStatus)) {
             return Result.error("已完成的运输单不能再分配司机");
         }
-
+        // 如果当前状态是已分配，就更新司机id和运输状态
         if (TransportStatus.Assign.equals(currentStatus)) {
             transport.setDriverId(driverId);
             transport.setTransportStatus(TransportStatus.Transporting);
             transportService.updateById(transport);
+            
+            // 发送运输任务给司机
+            User driver = userService.getById(driverId);
+            Apply apply = applyMapper.selectApplyByTransportId(transportId);
+            String message = "您有一条新的运输任务，物资：" + materialService.getById(apply.getMaterialId()).getMaterialName() + "，数量：" + apply.getApplyQuantity() + "，请尽快运输";
+            Message MessageToDriver = new Message();
+            MessageToDriver.setReceiverId(driverId);
+            MessageToDriver.setTitle("新的运输任务");
+            MessageToDriver.setContent(message);
+            MessageToDriver.setSendTime(LocalDateTime.now());
+            MessageToDriver.setType(Type.Emergency);
+            messageService.save(MessageToDriver);
 
             // 根据运输id查询apply_info表中的申请信息,并更新申请信息的状态
-            Apply apply = applyMapper.selectApplyByTransportId(transportId);
             apply.setApprovalStatus(ApprovalStatus.Transporting);
             apply.setApprovalComment("已分配到司机，" + userService.getById(driverId).getUsername() + "正在运输中");
             applyMapper.updateById(apply);
+            
+            // 发送信息给用户
+            User user = userService.getById(apply.getUserId());
+            Message MessageToUser = new Message();
+            MessageToUser.setReceiverId(user.getUserId());
+            MessageToUser.setTitle("已分配到司机");
+            MessageToUser.setContent("您的运输任务已分配到司机，" + userService.getById(driverId).getUsername() + " 司机正在努力运输中");
+            MessageToUser.setSendTime(LocalDateTime.now());
+            MessageToUser.setType(Type.Info);
+            messageService.save(MessageToUser);
         }
 
         return Result.success("分配司机成功");
@@ -204,6 +225,18 @@ public class TransportController {
                     userMaterial.setQuantity(apply.getApplyQuantity());
                     userMaterialService.save(userMaterial);
                 }
+                
+                // 发送信息给用户
+                User user = userService.getById(apply.getUserId());
+                Message MessageToUser = new Message();
+                MessageToUser.setReceiverId(user.getUserId());
+                MessageToUser.setTitle("运输完成");
+                MessageToUser.setContent("您的运输任务已完成，" + userService.getById(transport.getDriverId()).getUsername() + " 司机已到达。");
+                MessageToUser.setSendTime(arriveTime);
+                MessageToUser.setType(Type.Success);
+                messageService.save(MessageToUser);
+                
+                
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }

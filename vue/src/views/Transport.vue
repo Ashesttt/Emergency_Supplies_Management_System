@@ -102,7 +102,7 @@
       </el-table-column>
       <el-table-column prop="destination" label="目的地">
       </el-table-column>
-      <el-table-column prop="startTime" label="订单开始时间">
+      <el-table-column prop="startTime" label="订单开始时间" sortable>
       </el-table-column>
       <el-table-column prop="endTime" label="订单结束时间" width="150px">
       </el-table-column>
@@ -188,7 +188,7 @@ export default {
       applicationId: "",
       username: "",
       userRole: "",
-      userId: "",
+      userId: "99999",
       materialId: "",
       materialName: "",
       materialType: "",
@@ -261,7 +261,6 @@ export default {
        * 获取所有申请状态
        * */
       request.get("/transport/transportStatus").then(res => {
-        console.log("res:", res)
         if (res.code !== "200") {
           this.$message.error("获取失败,原因：" + res.msg)
         } else {
@@ -273,7 +272,6 @@ export default {
        *  获取全部司机信息
        * */
       request.get("/user/driver").then(res => {
-        console.log("driver:", res)
         if (res.code !== "200") {
           this.$message.error("获取失败,原因：" + res.msg)
         } else {
@@ -354,25 +352,28 @@ export default {
      * 分配司机
      * */
     Assign(driver) {
-      let driverId = driver.userId
-      let transportId = this.transportId
-      console.log("this.Assignform:", this.Assignform)
-      if (driver.userId === "") {
+      console.log("driver:", driver)
+      if (driver === "" || driver === undefined) {
         this.$message.error("请选择司机")
         return
       }
-      request.post("/transport/assign", {
-        transportId: transportId,
-        driverId: driverId
-      }).then(res => {
-        if (res.code !== "200") {
-          this.$message.error(res.msg)
-        } else {
-          this.$message.success("分配成功")
-          this.AssignDriverFormVisible = false
-          this.load()
-        }
-      })
+      if (driver.userId) {
+        let driverId = driver.userId
+        let transportId = this.transportId
+        console.log("this.Assignform:", this.Assignform)
+        request.post("/transport/assign", {
+          transportId: transportId,
+          driverId: driverId
+        }).then(res => {
+          if (res.code !== "200") {
+            this.$message.error(res.msg)
+          } else {
+            this.$message.success("分配成功")
+            this.AssignDriverFormVisible = false
+            this.load()
+          }
+        })
+      }
     },
 
 

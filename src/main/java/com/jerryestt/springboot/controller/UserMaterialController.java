@@ -6,14 +6,8 @@ import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.jerryestt.springboot.common.Result;
-import com.jerryestt.springboot.entity.Material;
-import com.jerryestt.springboot.entity.User;
-import com.jerryestt.springboot.entity.UserMaterial;
-import com.jerryestt.springboot.entity.UserUsageRecord;
-import com.jerryestt.springboot.service.IMaterialService;
-import com.jerryestt.springboot.service.IUserService;
-import com.jerryestt.springboot.service.UserMaterialService;
-import com.jerryestt.springboot.service.UserUsageRecordService;
+import com.jerryestt.springboot.entity.*;
+import com.jerryestt.springboot.service.*;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -36,6 +30,9 @@ public class UserMaterialController {
 
     @Resource
     private UserUsageRecordService userUsageRecordService;
+
+    @Resource
+    private MessageService messageService;
 
     // 用user_id和material_id删除
     @PostMapping("/{user_id}/{material_id}")
@@ -148,6 +145,20 @@ public class UserMaterialController {
             LocalDateTime now = LocalDateTime.now();            //获取当前时间
             userUsageRecord.setRecordTime(now);
             userUsageRecordService.save(userUsageRecord);
+            
+            // 发送信息给用户
+            Material material = materialService.getById(materialId);
+            String message1 = "您使用了 " + material.getMaterialName() + "，使用数量为 " + usage_quantity + "，使用原因为 " + usage_reason;
+
+            Message message = new Message();
+            message.setReceiverId(userId);
+            message.setTitle("物资使用通知");
+            message.setContent(message1);
+            message.setSendTime(now);
+            message.setType(Type.Info);
+            messageService.save(message);
+            
+
         } else {
             return Result.error("您的物资数量不足，无法使用");
         }

@@ -9,6 +9,9 @@ import java.util.List;
 
 //@Mapper
 public interface UserMapper extends BaseMapper<User> {
+    
+    @Select("SELECT user_id FROM user_info WHERE username = #{username}")
+    int getUserIdByUsername(String username);
 
 //    /**
 //     * 查询

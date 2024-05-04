@@ -235,7 +235,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
-        this.$message.success("查询成功")
+        // this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -251,7 +251,7 @@ export default {
           this.options_approvalStatus = res.data;
         }
       })
-
+      this.$router.push("/approval")
     },
 
     /**
@@ -345,10 +345,8 @@ export default {
         }
         if (res.code !== "200") {
           this.$message.error("审批失败" + res.msg)
-          this.load()
         } else {
           this.$message.success(res.msg)
-          this.load()
         }
       })
     },

@@ -1,20 +1,23 @@
 <template>
   <el-menu :default-openeds="opens" style="min-height: 100%; overflow-x: hidden; overflow-y: hidden;"
-           background-color="rgb(48, 65, 86)"
-           text-color="#fff"
-           active-text-color="#ffd04b"
-           :collapse-transition="false"
+           background-color="#5870a1"
+           text-color="#f0faf5"
+           active-text-color="#a2ca8c"
+           :collapse-transition="true"
            :collapse="isCollapse"
            router
   >
-    <div style="height: 60px; line-height: 60px; text-align: center">
-      <img src="../assets/logo.png" alt="" style="width: 20px; position: relative; top: 5px; right: 5px">
-      <b style="color: white" v-show="logoTextShow">应急救援装备管理系统</b>
-    </div>
-
+    <!--TODO:美化滚动条    -->
+    <router-link to="/">
+      <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 60px;">
+        <!--        <img src="../assets/images/shuzai.jpg" alt="" style="width: 25px;">-->
+        <b v-show="logoTextShow"
+           style="color: #ff6347; font-size: 20px; font-weight: bold; text-shadow: 2px 2px 4px #000000;">应急装备管理系统</b>
+      </div>
+    </router-link>
     <div v-for="item in menus" :key="item.menuId">
       <div v-if="item.path">
-        <el-menu-item :index="item.path">
+        <el-menu-item :index="item.path" class="el-menu-item">
           <i :class="item.icon"></i>
           <span slot="title">{{ item.menuname }}</span>
         </el-menu-item>
@@ -23,7 +26,7 @@
         <el-submenu :index="item.menuId + ''">
           <template slot="title">
             <i :class="item.icon"></i>
-            <span slot="title">{{ item.menuname }}</span>
+            <span slot="title" v-show="logoTextShow">{{ item.menuname }}</span>
           </template>
           <div v-for="subItem in item.children" :key="subItem.menuId">
             <el-menu-item :index="subItem.path">
@@ -34,7 +37,6 @@
         </el-submenu>
       </div>
     </div>
-
   </el-menu>
 </template>
 
@@ -60,4 +62,5 @@ export default {
   overflow: hidden;
   height: 100vh;
 }
+
 </style>

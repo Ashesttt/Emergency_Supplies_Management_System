@@ -242,7 +242,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
-        this.$message.success("查询成功")
+        // this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -303,6 +303,7 @@ export default {
       // 直接把地址赋值给目的地
       // this.form.destination = this.address
       this.$set(this.form, 'destination', this.address);
+      this.form.username = this.username
     },
 
     /**
@@ -336,16 +337,15 @@ export default {
 
           //提交申请表单
           // form中只有userId，materialId，apply_quantity，apply_reason
+          this.form.materialName = materialName
           request.post("/apply", this.form).then(res => {
             if (res.code === "200") {
               this.$message.success("申请成功")
               this.ApplyFormVisible = false
-              this.load()
             } else {
               this.$message.error("申请失败")
             }
           })
-
         }
       })
     },

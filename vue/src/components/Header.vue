@@ -10,6 +10,15 @@
 
     </div>
 
+
+    <button style="padding: 0; border: none; background: none; cursor: pointer; margin-right: 20px;"
+            @click="drawer = true">
+      <i class="el-icon-message"
+         :style="{ 'font-size': hasNewMessage ? '40px' : '30px', color: hasNewMessage ? 'red' : 'black' }">
+      </i>
+    </button>
+
+
     <el-image
         style="width: 50px; height: 50px; border-radius:50%; margin-right: 20px; align-self: center;"
         :src="user_info.avatarurl"
@@ -31,12 +40,41 @@
         </el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
+
+    <el-drawer
+        title="信息"
+        :visible.sync="drawer"
+        :direction="direction"
+        :modal="false"
+    >
+      <div style="padding: 10px">
+        <el-collapse accordion :data="messageData">
+          <el-collapse-item v-for="message in messageData.slice(0,10)" :key="message.messageId"
+                            :class="style(message.type)" style="padding: 5px;margin-bottom: 5px;">
+            <template slot="title">
+              <!--TODO:根据message.type展示不同的图标-->
+              <div class="title" style="margin-left: 10px">{{ message.title }}<i class="header-icon el-icon-info"></i>
+              </div>
+              <div class="sendTime" style="margin-left: 18%">{{ message.sendTime }}</div>
+            </template>
+            <div class="content" style="margin-left: 10px; position: relative;">
+              {{ message.content }}
+              <div style="position: absolute; right: 15px; top: 25px;">
+                <el-button type="primary" size="small" round @click="handleRead(message.messageId)">已 读</el-button>
+              </div>
+            </div>
+          </el-collapse-item>
+        </el-collapse>
+      </div>
+    </el-drawer>
+
   </div>
 </template>
 
 
 <script>
 import user from "../views/User.vue";
+import request from "@/utils/request";
 
 export default {
   name: "Header",
@@ -57,22 +95,131 @@ export default {
       console.log(newVal)
     }
   },
+  created() {
+    this.getMessages()
+    //   TODO：写一个定时器，每隔一段时间获取一次消息，或者监听消息的变化
+  },
   data() {
     return {
-      user_info: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}//获取用户信息
+      user_info: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},//获取用户信息
+      drawer: false,
+      direction: 'rtl',
+      messageData: [],
+      messageId: "",
+      sendTime: "",
+      hasNewMessage: false
     }
   },
   methods: {
     logout() {
       this.$store.commit("logout")
       this.$message.success("退出成功")
-    }
-  }
+    },
 
+
+    /**
+     * 标记为已读
+     * */
+    handleRead(messageId) {
+      console.log("messageId", messageId)
+      request.post("/message/handleRead", null, {
+        params: {
+          messageId: messageId
+        }
+      }).then(res => {
+        this.consoleLog(res)
+        if (res.code !== "200") {
+          this.$message.error(res.msg)
+        }
+        this.getMessages()
+      })
+    },
+
+
+    /**
+     * 获取接收者为这个用户的message
+     * */
+    getMessages() {
+      request.get("/message/getMessages", {
+        params: {
+          username: this.user_info.username
+        }
+      }).then(res => {
+        this.consoleLog(res)
+        if (res.code !== "200") {
+          this.$message.error(res.msg)
+        }
+        this.messageData = res.data;
+        if (this.messageData.length !== 0) {
+          this.hasNewMessage = true; // 设置有新消息
+        }
+        if (this.messageData.length === 0) {
+          this.$message.info("暂无消息")
+        }
+      })
+    },
+
+    /**
+     * 根据消息的类型，设置不同的样式
+     * */
+    style(type) {
+      if (type === "Emergency") {
+        return "Emergency-style"
+      } else if (type === "Info") {
+        return "Info-style"
+      } else if (type === "Warning") {
+        return "Warning-style"
+      } else if (type === "Error") {
+        return "Error-style"
+      } else if (type === "Success") {
+        return "Success-style"
+      }
+    },
+
+  }
 }
 </script>
 
 
 <style scoped>
+.title {
+  font-size: 20px; /* 标题字体大小 */
+  position: fixed;
+  color: #121212; /* 标题字体颜色 */
+}
+
+.sendTime {
+  font-size: 15px; /* 发送时间字体大小 */
+  color: #121212; /* 发送时间字体颜色 */
+  position: fixed;
+}
+
+.content {
+  font-size: 16px; /* 内容字体大小 */
+  color: #121212; /* 内容字体颜色 */
+  margin-bottom: 10px; /* 内容与发送时间的间距 */
+}
+
+
+.Info-style {
+  background-color: #909399;
+}
+
+.Emergency-style {
+  background-color: #9215a4;
+}
+
+.Warning-style {
+  background-color: #E6A23C;
+}
+
+.Error-style {
+  background-color: #F56C6C;
+}
+
+.Success-style {
+  background-color: #67C23A;
+}
+
 
 </style>

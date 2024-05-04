@@ -36,6 +36,9 @@ public class ApplyController {
     @Resource
     private TransportService transportService;
 
+    @Resource
+    private MessageService messageService;
+
     // 新增或更新
     @PostMapping
     public Result save(@RequestBody Apply apply) {
@@ -43,7 +46,7 @@ public class ApplyController {
         if (applyQuantity <= 0) {
             return Result.error("申请数量不能小于等于0");
         }
-        
+
         Apply saveapply = new Apply();
         saveapply.setUserId(apply.getUserId());
         saveapply.setMaterialId(apply.getMaterialId());
@@ -56,6 +59,37 @@ public class ApplyController {
 
         //设置申请状态为Pending（待审批）
         saveapply.setApprovalStatus(ApprovalStatus.Pending);
+
+        //TODO: 把发送信息模块重构一个函数
+
+        // 发送信息模块
+        // 获取所有身份为管理员的用户
+        List<User> users = userService.list(new QueryWrapper<User>().eq("role", "Admin"));
+        // 获取用户id列表
+        List<Integer> userIds = users.stream().map(User::getUserId).collect(Collectors.toList());
+
+        // 发送信息
+        for (Integer userId : userIds) {
+            Message message = new Message();
+            message.setReceiverId(userId);
+            message.setTitle("新的申请");
+            String username = apply.getUsername();
+            String materialName = apply.getMaterialName();
+            message.setContent("用户 " + username + " 申请了 " + apply.getApplyQuantity() + " 个 " + materialName + " ，请尽快审批");
+            message.setSendTime(date);
+            message.setType(Type.Emergency);
+            messageService.save(message);
+        }
+
+        // 发送 申请信息发送成功 给申请人
+        Message message = new Message();
+        message.setReceiverId(apply.getUserId());
+        message.setTitle("申请信息发送成功");
+        message.setContent("您申请了 " + apply.getApplyQuantity() + " 个 " + apply.getMaterialName() + " ，请等待管理员审批");
+        message.setSendTime(date);
+        message.setType(Type.Info);
+        messageService.save(message);
+
 
         return Result.success(applyService.saveOrUpdate(saveapply));
     }
@@ -176,9 +210,6 @@ public class ApplyController {
             }
             return Result.error("库存不足！不能通过审批，请补充库存");
         }
-//        if (ApprovalStatus.Processing.equals(applyInfo.getApprovalStatus())) {
-//            return Result.success("该申请已在处理中");
-//        }
 
         LocalDateTime date = null;//获取当前时间给审批时间approvalTime
         date = LocalDateTime.now();
@@ -196,6 +227,33 @@ public class ApplyController {
                 applyInfo.setApprovalStatus(ApprovalStatus.InsufficientStock);// 设置申请状态为InsufficientStock（库存不足）
                 applyInfo.setApprovalComment("仓库库存不足");
                 applyService.updateById(applyInfo);
+
+                // 发送库存不足信息模块(给该用户和管理员)
+                // 获取物资名称
+                String materialName = material.getMaterialName();
+                // 获取所有身份为管理员的用户
+                List<User> users = userService.list(new QueryWrapper<User>().eq("role", "Admin"));
+                // 获取用户id列表
+                List<Integer> userIds = users.stream().map(User::getUserId).collect(Collectors.toList());
+                // 发送信息
+                for (Integer userId : userIds) {
+                    Message message1 = new Message();
+                    message1.setReceiverId(userId);
+                    message1.setTitle("库存不足");
+                    message1.setContent("仓库中的 " + materialName + " 不足 " + applyQuantity + " ，请补充库存");
+                    message1.setSendTime(date);
+                    message1.setType(Type.Error);
+                    messageService.save(message1);
+                }
+                // 给用户
+                Message message = new Message();
+                message.setReceiverId(applyInfo.getUserId());
+                message.setTitle("已通过审批，但库存不足，请等待");
+                message.setContent("仓库中的 " + materialName + " 不足 " + applyQuantity + " ，请等待管理员补充库存，再发放");
+                message.setSendTime(date);
+                message.setType(Type.Error);
+                messageService.save(message);
+
                 return Result.error("仓库库存不足");
             }
             // 更新后的仓库数量
@@ -235,13 +293,24 @@ public class ApplyController {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        
+
 
         try {
             // 5.更新申请状态为已审批
             applyInfo.setTransportId(transportId);
             applyInfo.setApprovalStatus(ApprovalStatus.Approved);
             applyInfo.setApprovalComment("已通过审批，等待运输分配司机中");
+
+            // 发送申请通过信息模块(给用户)
+            Message message = new Message();
+            message.setReceiverId(applyInfo.getUserId());
+            message.setTitle("申请通过");
+            String materialName = material.getMaterialName();
+            message.setContent("您申请的 " + materialName + " 已通过审批，等待运输分配司机中");
+            message.setSendTime(date);
+            message.setType(Type.Success);
+            messageService.save(message);
+
             applyService.updateById(applyInfo);
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -251,10 +320,26 @@ public class ApplyController {
         //TODO：(定时预警)把这个预警功能放到一个定时任务里，每天检查一次
         Integer threshold = material.getThreshold();
         if (quantityAfterUpdate < threshold) {
-            applyInfo.setApprovalComment("审批成功，但仓库中的" + material.getMaterialName() + "还剩" + quantityAfterUpdate + "，需要增加库存啦！");
+            applyInfo.setApprovalComment("审批成功，但仓库中的 " + material.getMaterialName() + " 还剩 " + quantityAfterUpdate + " ，需要增加库存啦！");
             applyService.updateById(applyInfo);
+
+            // 发送预警信息模块(给管理员)
+            // 获取所有身份为管理员的用户
+            List<User> users = userService.list(new QueryWrapper<User>().eq("role", "Admin"));
+            // 获取用户id列表
+            List<Integer> userIds = users.stream().map(User::getUserId).collect(Collectors.toList());
+            // 发送信息
+            for (Integer userId : userIds) {
+                Message message = new Message();
+                message.setReceiverId(userId);
+                message.setTitle("仓库预警");
+                message.setContent("仓库中的 " + material.getMaterialName() + " 还剩 " + quantityAfterUpdate + " ，需要增加库存啦！");
+                message.setSendTime(date);
+                message.setType(Type.Warning);
+                messageService.save(message);
+            }
+
             return Result.success(Constants.SUCCESS_BUT_RUNNING_OUT_OF_MATERIAL, "仓库中的" + material.getMaterialName() + "还剩" + quantityAfterUpdate + "，需要增加库存啦！");
-            //TODO：发送邮件
         }
         applyService.updateById(applyInfo);
         return Result.success("审批成功");
@@ -299,6 +384,17 @@ public class ApplyController {
         LocalDateTime date = LocalDateTime.now();
         applyInfo.setApprovalTime(date);
         applyService.updateById(applyInfo);
+        
+        // 发送拒绝信息模块(给用户)
+        Message message = new Message();
+        message.setReceiverId(applyInfo.getUserId());
+        message.setTitle("申请被拒绝");
+        String materialName = materialService.getById(applyInfo.getMaterialId()).getMaterialName();
+        message.setContent("您申请的 " + materialName + " 已被管理员拒绝");
+        message.setSendTime(date);
+        message.setType(Type.Error);
+        messageService.save(message);
+        
         return Result.success("已拒绝");
     }
 

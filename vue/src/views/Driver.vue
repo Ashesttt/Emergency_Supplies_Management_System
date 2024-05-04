@@ -240,7 +240,6 @@ export default {
               } else {
                 this.$message.success("操作成功")
               }
-              this.load()
             })
           })
           .catch(_ => {
