@@ -58,7 +58,7 @@
               <div class="sendTime" style="margin-left: 18%">{{ message.sendTime }}</div>
             </template>
             <div class="content" style="margin-left: 10px; position: relative;">
-              {{ message.content }}
+              <div v-html="message.content"></div>
               <div style="position: absolute; right: 15px; top: 25px;">
                 <el-button type="primary" size="small" round @click="handleRead(message.messageId)">已 读</el-button>
               </div>

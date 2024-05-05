@@ -15,9 +15,10 @@ import java.util.List;
 */
 public interface MessageMapper extends BaseMapper<Message> {
 
-    
-    @Select("SELECT * FROM message_info WHERE receiver_id = #{userId} AND read_status = 'NO'")
+
+    @Select("SELECT * FROM message_info WHERE receiver_id = #{userId} AND read_status = 'NO' ORDER BY send_time DESC")
     List<Message> getMessagesByReceiverId(String userId);
+
 
     @Update("UPDATE message_info SET read_status = 'YES' WHERE message_id = #{messageId}")
     void handleRead(Integer messageId);

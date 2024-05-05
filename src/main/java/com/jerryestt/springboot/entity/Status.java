@@ -4,5 +4,5 @@ public enum Status {
     Available,
     Damaged,
     Repairing,
-    Stockout,
+    Expired,
 }
