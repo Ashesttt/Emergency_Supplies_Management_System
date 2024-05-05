@@ -101,6 +101,9 @@ public class TransportController {
         if (transportId != null) {
             queryWrapper.eq("transport_id", transportId);
         }
+        
+        queryWrapper.orderByDesc("start_time");
+        
         IPage<Transport> transportIPage = transportService.page(page, queryWrapper);
         List<Transport> records = transportIPage.getRecords();
         records.forEach(transport -> {

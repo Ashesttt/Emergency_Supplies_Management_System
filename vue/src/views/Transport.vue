@@ -35,8 +35,8 @@
 
     </div>
 
-    <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
-              @selection-change="handleSelectionChange">
+    <el-table :data="tableData" border :header-cell-class-name="headerBg"
+              @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="transportId" label="运输id" sortable>
       </el-table-column>
@@ -295,6 +295,24 @@ export default {
         return "icon_Unknow"
       }
     },
+    
+    /**
+     * 根据transportStatus返回不同的table样式
+     * */
+    tableRowClassName({row}) {
+      if (row.transportStatus === "Transporting") {
+        return "Transporting-row"
+      } else if (row.transportStatus === "Arrived") {
+        return "Arrived-row"
+      } else if (row.transportStatus === "Assign") {
+        return "Assign-row"
+      } else {
+        return ""
+      }
+      
+      
+      
+    },
 
 
     /**
@@ -314,6 +332,19 @@ export default {
       } catch (error) {
         // 用户点击了取消，所以不执行任何操作
       }
+    },
+    
+    /**
+     * 重置，纯享版
+     * */
+    resett() {
+      this.transportId = "";
+      this.username = "";
+      this.materialName = "";
+      this.driverName = "";
+      this.transportStatus = "";
+      this.load();
+
     },
 
     /**
@@ -370,7 +401,7 @@ export default {
           } else {
             this.$message.success("分配成功")
             this.AssignDriverFormVisible = false
-            this.load()
+            this.resett()
           }
         })
       }
@@ -403,14 +434,16 @@ export default {
   background: #eee !important;
 }
 
-.avatar {
-  width: 138px;
-  height: 138px;
-  display: block;
+
+.el-table .Transporting-row {
+  background-color: rgba(0, 255, 255, 0.1); /* Or any other style you want */
 }
 
-.avatar-uploader {
-  text-align: center;
-  padding-bottom: 10px;
+.el-table .Arrived-row {
+  background-color: rgba(0, 255, 0, 0.1); /* Or any other style you want */
+}
+
+.el-table .Assign-row {
+  background-color: rgba(255, 255, 0, 0.5); /* Or any other style you want */
 }
 </style>

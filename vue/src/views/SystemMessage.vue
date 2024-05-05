@@ -15,7 +15,7 @@
 
     </div>
 
-    <el-table :data="tableData" border stripe :header-cell-class-name="headerBg">
+    <el-table :data="tableData" border :header-cell-class-name="headerBg" :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="messageId" label="日志id" sortable width="100px">
       </el-table-column>
@@ -117,7 +117,27 @@ export default {
       this.username = "";
       this.load()
     },
-    
+
+
+    /**
+     * 根据信息重要程度返回不同的table颜色
+     * */
+    tableRowClassName({row}) {
+      if (row.type === "Warning") {
+        return "Warning-row"
+      } else if (row.type === "Error") {
+        return "Error-row"
+      } else if (row.type === "Info") {
+        return "Info-row"
+      } else if (row.type === "Emergency") {
+        return "Emergency-row"
+      } else if (row.type === "Success") {
+        return "Success-row"
+      } else {
+        return ""
+      }
+    },
+
 
     /**
      * 处理分页大小改变
@@ -145,14 +165,24 @@ export default {
   background: #eee !important;
 }
 
-.avatar {
-  width: 138px;
-  height: 138px;
-  display: block;
+.el-table .Warning-row {
+  background-color: rgba(255, 255, 0, 0.1); /* Or any other style you want */
 }
 
-.avatar-uploader {
-  text-align: center;
-  padding-bottom: 10px;
+.el-table .Error-row {
+  background-color: rgba(255, 0, 0, 0.1); /* Or any other style you want */
 }
+
+.el-table .Info-row {
+  background-color: rgba(0, 0, 255, 0.1); /* Or any other style you want */
+}
+
+.el-table .Emergency-row {
+  background-color: rgba(255, 0, 255, 0.1); /* Or any other style you want */
+}
+
+.el-table .Success-row {
+  background-color: rgba(0, 255, 0, 0.1); /* Or any other style you want */
+}
+
 </style>

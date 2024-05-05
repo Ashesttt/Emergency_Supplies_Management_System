@@ -150,8 +150,7 @@ export default {
   },
   created() {
     // 请求分页查询数据
-    let user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {};
-    this.load(user)
+    this.load()
   },
 
 
@@ -159,7 +158,8 @@ export default {
     /**
      * 查询数据方法
      * */
-    load(user) {
+    load() {
+      let user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : {};
       request.get("/transport/page", {
         params: {
           pageNum: this.pageNum,
@@ -175,7 +175,7 @@ export default {
         if (res.code !== "200") {
           this.$message.error(res.msg)
         }
-        this.$message.success("查询成功")
+        // this.$message.success("查询成功")
         this.tableData = res.data.records;
         this.total = res.data.total;
       })
@@ -240,6 +240,7 @@ export default {
               } else {
                 this.$message.success("操作成功")
               }
+              this.load()
             })
           })
           .catch(_ => {

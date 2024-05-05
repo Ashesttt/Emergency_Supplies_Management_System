@@ -76,6 +76,8 @@ public class MessageController {
         if (!userIds.isEmpty()) {
             queryWrapper.in("receiver_id", userIds);
         }
+        // 按照发送时间降序排列
+        queryWrapper.orderByDesc("send_time");
         IPage<Message> messageIPage = messageService.page(page, queryWrapper);
         List<Message> records = messageIPage.getRecords();// 获取记录列表
         records.forEach(record -> {// 遍历记录列表

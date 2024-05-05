@@ -89,7 +89,9 @@ public class UserUsageRecordController {
         if (!materialIds.isEmpty()) {
             queryWrapper.in("material_id", materialIds);
         }
-
+        
+        queryWrapper.orderByDesc("record_time"); // 按照创建时间降序排列
+        
         // 再用 用户id和物资id 分别查询 用户名，用户身份，物资名称，物资种类，物资仓库数量
         IPage<UserUsageRecord> userUsageRecordPage = userUsageRecordService.page(page, queryWrapper);// 分页查询
         List<UserUsageRecord> records = userUsageRecordPage.getRecords();

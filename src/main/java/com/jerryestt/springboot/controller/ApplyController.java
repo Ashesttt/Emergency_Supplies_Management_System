@@ -95,7 +95,6 @@ public class ApplyController {
     }
 
     // 分页查询
-    //TODO： 以approvalStatus排序
     @GetMapping("/page")
     public Result findPage(@RequestParam Integer pageNum,
                            @RequestParam Integer pageSize,
@@ -137,6 +136,8 @@ public class ApplyController {
             queryWrapper.in("approval_status", approvalStatus);
         }
 
+        queryWrapper.orderByDesc("apply_time");
+        
         IPage<Apply> applyIPage = applyService.page(page, queryWrapper);
         List<Apply> records = applyIPage.getRecords();
         records.forEach(record -> {

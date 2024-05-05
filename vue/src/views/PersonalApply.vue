@@ -29,8 +29,8 @@
 
     </div>
 
-    <el-table :data="tableData" border stripe :header-cell-class-name="headerBg"
-              @selection-change="handleSelectionChange">
+    <el-table :data="tableData" border :header-cell-class-name="headerBg"
+              @selection-change="handleSelectionChange" :row-class-name="tableRowClassName">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="applicationId" label="申请id" sortable>
       </el-table-column>
@@ -221,6 +221,33 @@ export default {
       }
     },
 
+    /**
+     * 用approvalStatus来返回对应的table样式
+     * */
+    tableRowClassName({row}) {
+      console.log("row:", row)
+      console.log("row.approvalStatus:", row.approvalStatus)
+      if (row.approvalStatus === "Approved") {
+        return "approved-row";
+      } else if (row.approvalStatus === "Rejected") {
+        return "rejected-row";
+      } else if (row.approvalStatus === "Pending") {
+        return "pending-row";
+      }else if (row.approvalStatus === "Canceled") {
+        return "canceled-row";
+      }else if (row.approvalStatus === "Completed") {
+        return "completed-row";
+      }else if (row.approvalStatus === "Processing") {
+        return "processing-row";
+      }else if (row.approvalStatus === "InsufficientStock") {
+        return "insufficientStock-row";
+      }else if (row.approvalStatus === "Transporting") {
+        return "transporting-row";
+      } else {
+        return "";
+      }
+    },
+
 
     /**
      * 重置查询条件
@@ -286,14 +313,29 @@ export default {
   background: #eee !important;
 }
 
-.avatar {
-  width: 138px;
-  height: 138px;
-  display: block;
+.el-table .approved-row {
+  background: rgba(78, 210, 8, 0.29);
 }
 
-.avatar-uploader {
-  text-align: center;
-  padding-bottom: 10px;
+.el-table .rejected-row {
+  background: rgba(223, 46, 46, 0.15);
+}
+.el-table .pending-row {
+  background-color: rgba(255, 255, 0, 0.5); /* Or any other style you want */
+}
+.el-table .canceled-row {
+  background-color: rgba(255, 0, 0, 0.1); /* Or any other style you want */
+}
+.el-table .completed-row {
+  background-color: rgba(0, 255, 0, 0.1); /* Or any other style you want */
+}
+.el-table .processing-row {
+  background-color: rgba(0, 0, 255, 0.1); /* Or any other style you want */
+}
+.el-table .insufficientStock-row {
+  background-color: rgba(184, 5, 255, 0.1); /* Or any other style you want */
+}
+.el-table .transporting-row {
+  background-color: rgba(0, 255, 255, 0.1); /* Or any other style you want */
 }
 </style>
