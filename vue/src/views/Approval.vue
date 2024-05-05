@@ -463,20 +463,22 @@ export default {
   background: #eee !important;
 }
 .el-table .approved-row {
-  background: rgba(78, 210, 8, 0.29);
+  background-color: rgba(0, 255, 0, 0.1); /* Or any other style you want */
 }
 
 .el-table .rejected-row {
   background: rgba(223, 46, 46, 0.15);
 }
-.el-table .pending-row {
+.el-table 
+.pending-row {
   background-color: rgba(255, 255, 0, 0.5); /* Or any other style you want */
 }
 .el-table .canceled-row {
   background-color: rgba(255, 0, 0, 0.1); /* Or any other style you want */
 }
 .el-table .completed-row {
-  background-color: rgba(0, 255, 0, 0.1); /* Or any other style you want */
+  background-color: rgba(78, 210, 8, 0.29);
+
 }
 .el-table .processing-row {
   background-color: rgba(0, 0, 255, 0.1); /* Or any other style you want */
