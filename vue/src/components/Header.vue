@@ -9,13 +9,6 @@
       </el-breadcrumb>
 
     </div>
-
-    <el-image
-        style="width: 50px; height: 50px; border-radius:50%; margin-right: 20px; align-self: center;"
-        :src="user_info.avatarurl"
-        :preview-src-list="[user_info.avatarurl]"
-        fit="cover"
-    ></el-image>
     
     <el-dropdown style="width: auto; cursor: pointer">
       <span>{{ user_info.username }}</span><i class="el-icon-arrow-down" style="margin-left: 5px"></i>

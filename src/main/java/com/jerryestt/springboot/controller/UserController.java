@@ -256,12 +256,22 @@ public class UserController {
     public Result register(@RequestBody UserDTO userDTO) {
         String username = userDTO.getUsername();
         String password = userDTO.getPassword();
-        String role = userDTO.getUserRole().toString();
+        userDTO.setUserRole("Student");
 
         //同上Login方法的疑问
         if (StrUtil.isBlank(username) || StrUtil.isBlank(password)) {// 如果用户名或密码为空
             return Result.error(Constants.USERNAME_OR_PASSWORD_CANNOT_BE_EMPTY, "用户名或密码不能为空");
         }
         return Result.success(userService.register(userDTO));
+    }
+    
+    /**
+     * 获取所有用户为教师的信息
+     * */
+    @GetMapping("/getTeacher")
+    public Result getTeacher() {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role", "Teacher");
+        return Result.success(userService.list(queryWrapper));
     }
 }

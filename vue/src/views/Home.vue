@@ -1,51 +1,42 @@
 <template>
   <div>
     <div style="text-align: center; font-size: 40px; margin-top: 20px; margin-bottom: 40px">
-      欢迎使用应急救援装备管理系统
+      欢迎使用在线学习系统
     </div>
     
     <el-row :gutter="10" style="margin-bottom: 40px">
-      <el-col :span="6">
+      <el-col :span="8">
         <el-card>
           <div style="color: #409EFF">
             <i class="el-icon-user-solid"></i>
-            用户总数
+            教师总数
           </div>
           <div style="padding: 10px 0; text-align:center; font-weight:bold">
             9999
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="8">
         <el-card>
           <div style="color: #67C23A">
-            应急装备总数
+            学生总数
           </div>
           <div style="padding: 10px 0; text-align:center; font-weight:bold">
             5000
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="8">
         <el-card>
           <div style="color: #E6A23C">
-            应急救援人员总数
+            课程总数
           </div>
           <div style="padding: 10px 0; text-align:center; font-weight:bold">
             6000
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
-        <el-card>
-          <div style="color: #F56C6C">
-            应急救援车辆总数
-          </div>
-          <div style="padding: 10px 0; text-align:center; font-weight:bold">
-            100
-          </div>
-        </el-card>
-      </el-col>
+
     </el-row>
     
     
@@ -67,7 +58,7 @@
           <div>
             <p>系统版本：V1.0.0</p>
             <p>系统时间：{{ new Date().toLocaleString() }}</p>
-            <p>系统开发：马秀影</p>
+            <p>系统开发：黄纪皓</p>
           </div>
         </el-card>
       </el-col>
