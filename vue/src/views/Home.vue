@@ -5,44 +5,24 @@
     </div>
 
     <el-row :gutter="10" style="margin-bottom: 40px">
-      <el-col :span="6">
+      <el-col :span="12">
         <el-card>
           <div style="color: #409EFF">
             <i class="el-icon-user-solid"></i>
             用户总数
           </div>
           <div style="padding: 10px 0; text-align:center; font-weight:bold">
-            9999
+            {{ totleUser }}
           </div>
         </el-card>
       </el-col>
-      <el-col :span="6">
+      <el-col :span="12">
         <el-card>
           <div style="color: #67C23A">
             应急装备总数
           </div>
           <div style="padding: 10px 0; text-align:center; font-weight:bold">
-            5000
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card>
-          <div style="color: #E6A23C">
-            应急救援人员总数
-          </div>
-          <div style="padding: 10px 0; text-align:center; font-weight:bold">
-            6000
-          </div>
-        </el-card>
-      </el-col>
-      <el-col :span="6">
-        <el-card>
-          <div style="color: #F56C6C">
-            应急救援车辆总数
-          </div>
-          <div style="padding: 10px 0; text-align:center; font-weight:bold">
-            100
+            {{ totleMaterial }}
           </div>
         </el-card>
       </el-col>
@@ -82,16 +62,43 @@ import * as echarts from 'echarts'
 export default {
   name: "Home",
   data() {
-    return {}
+    return {
+      totleUser: "",
+      totleMaterial: "",
+
+    }
   },
 
   mounted() {
+    //获取用户
+    this.request.get("/echarts/totleUser").then(res => {
+      console.log(res)
+      // 如果是401，跳转到登录页面
+      if (res.code === "401") {
+        this.$store.commit("logout")
+        return
+      }
+      this.totleUser = res.msg
+    })
+
+    //获取物资信息
+    this.request.get("/echarts/totleMaterial").then(res => {
+      console.log(res)
+      // 如果是401，跳转到登录页面
+      if (res.code === "401") {
+        this.$store.commit("logout")
+        return
+      }
+      this.totleMaterial = res.data
+    })
+
+
     // 饼图
 
     var pieOption = {
       title: {
-        text: '各季度管理员数量统计',
-        subtext: '比例图',
+        text: '物资类型统计',
+        subtext: '饼图',
         left: 'center'
       },
       tooltip: {
@@ -132,7 +139,7 @@ export default {
     var pieDom = document.getElementById('pie');
     var pieChart = echarts.init(pieDom);
 
-    this.request.get("/echarts/members").then(res => {
+    this.request.get("/echarts/typeMaterial").then(res => {
       console.log(res)
       // 如果是401，跳转到登录页面
       if (res.code === "401") {
@@ -140,10 +147,12 @@ export default {
         return
       }
       pieOption.series[0].data = [
-        {name: "第一季度", value: res.data[0]},
-        {name: "第二季度", value: res.data[1]},
-        {name: "第三季度", value: res.data[2]},
-        {name: "第四季度", value: res.data[3]},
+        {name: res.data[0].materialType, value: res.data[0].quantity},
+        {name: res.data[1].materialType, value: res.data[1].quantity},
+        {name: res.data[2].materialType, value: res.data[2].quantity},
+        {name: res.data[3].materialType, value: res.data[3].quantity},
+        {name: res.data[4].materialType, value: res.data[4].quantity},
+        {name: res.data[5].materialType, value: res.data[5].quantity},
       ]
       pieChart.setOption(pieOption)
     })
@@ -179,7 +188,7 @@ export default {
     var myChart = echarts.init(chartDom);
 
     this.request.get("/echarts/members").then(res => {
-
+      console.log(res)
       // option.xAxis.data = res.data.x//横坐标
       option.series[0].data = res.data//折线
       option.series[1].data = res.data//柱状

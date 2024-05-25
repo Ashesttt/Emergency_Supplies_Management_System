@@ -358,7 +358,7 @@ export default {
       request.put("/apply/approval", {
         applicationId: applicationId
       }).then(res => {
-        if (res.code === "11000") { //成功但仓库快没有物资啦
+        if (res.code === "11000") { //成功但仓库快没有物资啦 
           this.$message.success("审批成功")
           const h = this.$createElement;
           this.$notify({

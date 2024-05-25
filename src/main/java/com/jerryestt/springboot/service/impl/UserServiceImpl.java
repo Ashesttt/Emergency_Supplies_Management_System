@@ -68,6 +68,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         return one;
     }
+    
 
     /**
      * 封装查询用户信息的方法

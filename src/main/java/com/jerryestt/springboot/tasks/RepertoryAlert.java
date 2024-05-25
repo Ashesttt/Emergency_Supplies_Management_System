@@ -62,8 +62,8 @@ public class RepertoryAlert {
     
     // 过期物料提醒
     // 每天早上8点执行
-//    @Scheduled(cron = "0 0 8 * * ?")
-    @Scheduled(cron = "*/5 * * * * ?")
+    @Scheduled(cron = "0 0 8 * * ?")
+//    @Scheduled(cron = "*/5 * * * * ?")
     public void sendExpireAlert() {
         // 1. 获取全部仓库库存
         StringBuilder content = new StringBuilder();

@@ -35,6 +35,7 @@ public class IMaterialServiceImpl extends ServiceImpl<MaterialMapper, Material>
         queryWrapper.select("material_id").eq("material_name", materialName);
         return baseMapper.selectOne(queryWrapper).getMaterialId();// 返回物料名称对应的物料id
     }
+    
 }
 
 
