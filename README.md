@@ -6,6 +6,10 @@
 
 ## 快速开始
 
+### mvn -X clean install
+###  mvn package
+### java -jar SpringBoot-0.0.1-SNAPSHOT.jar
+
 ## 贡献者
 ***Thanks to the following people who have contributed to this project:***
 

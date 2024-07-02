@@ -45,7 +45,7 @@
       >
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
       </el-popconfirm>
-      <el-upload action="http://localhost:9090/user/import" :show-file-list="false" accept="xlsx"
+      <el-upload action="http://localhost:9091/user/import" :show-file-list="false" accept="xlsx"
                  :on-success="handleExcelImportSuccess" style="display: inline-block">
         <el-button type="primary" class="ml-5">导入 <i class="el-icon-bottom"></i></el-button>
       </el-upload>
@@ -315,7 +315,7 @@ export default {
      * 导出
      * */
     exp() {
-      window.open("http://localhost:9090/user/export")
+      window.open("http://localhost:9091/user/export")
     },
 
     /**

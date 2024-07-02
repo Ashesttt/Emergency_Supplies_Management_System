@@ -35,7 +35,7 @@
       >
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
       </el-popconfirm>
-      <el-upload action="http://localhost:9090/file/upload" :show-file-list="false"
+      <el-upload action="http://localhost:9091/file/upload" :show-file-list="false"
                  :on-success="handleFileUploadSuccess" :on-error="handleFileUploadError" style="display: inline-block">
         <el-button type="primary" class="ml-5">上传文件 <i class="el-icon-top"></i></el-button>
       </el-upload>

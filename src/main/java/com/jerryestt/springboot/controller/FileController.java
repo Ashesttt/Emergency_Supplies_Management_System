@@ -74,7 +74,7 @@ public class FileController {
             // 上传文件到磁盘
             file.transferTo(uploadFile);
             // 数据库若不存在重复文件，则不删除刚才上传的文件
-            url = "http://localhost:9090/file/" + fileUUID;
+            url = "http://localhost:9091/file/" + fileUUID;
         }
 
         // 存储数据库
@@ -106,7 +106,7 @@ public class FileController {
 
 
     /**
-     * 文件下载接口   http://localhost:9090/file/{fileUUID}
+     * 文件下载接口   http://localhost:9091/file/{fileUUID}
      *
      * @param fileUUID
      * @param response

@@ -129,7 +129,7 @@
         <el-form-item label="物资照片">
           <el-upload
               class="avatar-uploader"
-              action="http://localhost:9090/file/upload"
+              action="http://localhost:9091/file/upload"
               :show-file-list="true"
               :on-success="handlematerialUrlSuccess"
           >
