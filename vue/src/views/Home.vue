@@ -47,7 +47,7 @@
           <div>
             <p>系统版本：V1.0.0</p>
             <p>系统时间：{{ new Date().toLocaleString() }}</p>
-            <p>系统开发：马秀影</p>
+            <p>系统开发：Jerryestt</p>
           </div>
         </el-card>
       </el-col>
@@ -146,14 +146,15 @@ export default {
         this.$store.commit("logout")
         return
       }
-      pieOption.series[0].data = [
-        {name: res.data[0].materialType, value: res.data[0].quantity},
-        {name: res.data[1].materialType, value: res.data[1].quantity},
-        {name: res.data[2].materialType, value: res.data[2].quantity},
-        {name: res.data[3].materialType, value: res.data[3].quantity},
-        {name: res.data[4].materialType, value: res.data[4].quantity},
-        {name: res.data[5].materialType, value: res.data[5].quantity},
-      ]
+
+      //获取data的长度：
+      const a = res.data.length;
+      console.log("a:", a)
+      pieOption.series[0].data = []
+      for (let i = 0; i < a; i++) {
+        pieOption.series[0].data.push({name: res.data[i].materialType, value: res.data[i].quantity})
+      }
+
       pieChart.setOption(pieOption)
     })
 
