@@ -20,6 +20,8 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 -- Table structure for apply_info
 -- ----------------------------
+# 创建数据库
+DROP DATABASE IF EXISTS `emergency_material_manage`;
 DROP TABLE IF EXISTS `apply_info`;
 CREATE TABLE `apply_info`  (
   `application_id` int NOT NULL AUTO_INCREMENT COMMENT '申请id',
