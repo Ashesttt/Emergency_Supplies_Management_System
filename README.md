@@ -6,9 +6,16 @@
 
 ## 快速开始
 
+### source /Emergency_Supplies_Management_System/sql_0504.sql;
+
 ### mvn -X clean install
 ###  mvn package
 ### java -jar SpringBoot-0.0.1-SNAPSHOT.jar
+
+### cd /Emergency_Supplies_Management_System/vue
+### npm install
+### npm run serve
+
 
 ## 贡献者
 ***Thanks to the following people who have contributed to this project:***
