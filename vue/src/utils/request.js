@@ -3,8 +3,7 @@ import ElementUI from "element-ui";
 import router, {resetRouter} from "@/router";
 
 const request = axios.create({
-    // baseURL: 'http://localhost:9091',
-    baseURL: process.env.VUE_APP_BASE_API + "9091",
+    baseURL: 'http://47.92.99.199/',
     timeout: 5000
 })
 
