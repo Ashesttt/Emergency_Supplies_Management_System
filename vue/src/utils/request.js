@@ -3,7 +3,7 @@ import ElementUI from "element-ui";
 import router, {resetRouter} from "@/router";
 
 const request = axios.create({
-    baseURL: 'http://47.92.99.199/',
+    baseURL: 'http://47.92.99.199:9091',
     timeout: 5000
 })
 
