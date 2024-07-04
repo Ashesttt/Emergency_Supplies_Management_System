@@ -4,7 +4,7 @@ import router, {resetRouter} from "@/router";
 
 const request = axios.create({
     // baseURL: 'http://localhost:9091',
-    baseURL: process.env.VUE_APP_BASE_API,
+    baseURL: process.env.VUE_APP_BASE_API + "9091",
     timeout: 5000
 })
 
