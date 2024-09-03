@@ -57,12 +57,12 @@
           <el-button type="primary" @click="download(scope.row.url)">下载</el-button>
         </template>
       </el-table-column>
-<!--      <el-table-column label="是否已经被删除" align="center">-->
-<!--        <template slot-scope="scope">-->
-<!--          <el-switch v-model="scope.row.is_delete" active-color="#13ce66" inactive-color="#ccc"-->
-<!--                     @change="changeis_delete(scope.row)"></el-switch>-->
-<!--        </template>-->
-<!--      </el-table-column>-->
+      <el-table-column label="是否已经被删除" align="center">
+        <template slot-scope="scope">
+          <el-switch v-model="scope.row.isDelete" active-color="#13ce66" inactive-color="#ccc"
+                     @change="changeis_delete(scope.row)"></el-switch>
+        </template>
+      </el-table-column>
       <el-table-column label="链接是否可用" align="center">
         <template slot-scope="scope">
           <el-switch v-model="scope.row.enable" active-color="#13ce66" inactive-color="#ccc"
@@ -71,12 +71,12 @@
       </el-table-column>
 
 
-      <!--      <el-table-column prop="url" label="URL" width="140">-->
-      <!--      </el-table-column>-->
-      <!--      <el-table-column prop="is_delete" label="是否已经被删除">-->
-      <!--      </el-table-column>-->
-      <!--      <el-table-column prop="enable" label="链接是否可用" width="220">-->
-      <!--      </el-table-column>-->
+<!--            <el-table-column prop="url" label="URL" width="140">-->
+<!--            </el-table-column>-->
+<!--            <el-table-column prop="is_delete" label="是否已经被删除">-->
+<!--            </el-table-column>-->
+<!--            <el-table-column prop="enable" label="链接是否可用" width="220">-->
+<!--            </el-table-column>-->
 
 
       <el-table-column label="操作" width="200" align="center">
@@ -130,6 +130,7 @@ export default {
       url: "",
       is_delete: "",
       enable: "",
+      isDelete: "",
       multipleSelection: [],
       msg: "hello mxy",
       collapseBtnClass: "el-icon-s-fold",
@@ -238,19 +239,19 @@ export default {
       window.open(url, '_blank');
     },
     
-    // /**
-    //  * 改变是否已经被删除
-    //  * */
-    // changeis_delete(row) {
-    //   this.request.post("/file/update", row).then(res => {
-    //     if (res.code === '200') {
-    //       console.log(row.is_delete)
-    //       this.$message.success("操作成功")
-    //     } else {
-    //       this.$message.error("操作失败,原因：" + res.msg)
-    //     }
-    //   })
-    // },
+    /**
+     * 改变是否已经被删除
+     * */
+    changeis_delete(row) {
+      this.request.post("/file/update", row).then(res => {
+        if (res.code === '200') {
+          console.log(row.is_delete)
+          this.$message.success("操作成功")
+        } else {
+          this.$message.error("操作失败,原因：" + res.msg)
+        }
+      })
+    },
 
 
     /**

@@ -3,7 +3,7 @@ server:
 spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    password: 485010
+    password: root
     url: jdbc:mysql://localhost:3306/emergency_material_manage?serverTimezone=GMT%2b8
     username: root
     
@@ -22,4 +22,4 @@ mybatis-plus:
     
 files:
   upload:
-    path: D:\Emergency_Material_Manage\files\
+    path: ..\..\..\files\
