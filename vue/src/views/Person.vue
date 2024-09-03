@@ -6,7 +6,7 @@
       <el-form label-width="80px" size="small">
         <el-upload
             class="avatar-uploader"
-            action="http://localhost:9091/file/upload"
+            :action=uploadAction
             :show-file-list="true"
             :on-success="handleAvatarSuccess"
         >
@@ -44,7 +44,10 @@ export default {
   data() {
     return {
       form: {},
-      user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {}//获取用户信息
+      user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},//获取用户信息
+
+      // 动态构建上传文件的 URL，从环境变量中获取 VUE_APP_API_BASE_URL
+      uploadAction: `${process.env.VUE_APP_API_BASE_URL}/file/upload`,
     };
   },
   created() {

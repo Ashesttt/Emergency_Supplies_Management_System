@@ -35,7 +35,7 @@
       >
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
       </el-popconfirm>
-      <el-upload action="http://localhost:9091/file/upload" :show-file-list="false"
+      <el-upload :action=uploadAction :show-file-list="false"
                  :on-success="handleFileUploadSuccess" :on-error="handleFileUploadError" style="display: inline-block">
         <el-button type="primary" class="ml-5">上传文件 <i class="el-icon-top"></i></el-button>
       </el-upload>
@@ -138,6 +138,9 @@ export default {
       sideWidth: 200,
       logoTextShow: true, // logo文字是否显示
       dialogVisible: false, // 弹窗可视化
+      
+      // 动态构建上传文件的 URL，从环境变量中获取 VUE_APP_API_BASE_URL
+      uploadAction: `${process.env.VUE_APP_API_BASE_URL}/file/upload`
     }
   },
   created() {

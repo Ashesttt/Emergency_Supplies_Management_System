@@ -45,7 +45,7 @@
       >
         <el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
       </el-popconfirm>
-      <el-upload action="http://localhost:9091/user/import" :show-file-list="false" accept="xlsx"
+      <el-upload :action=importAction :show-file-list="false" accept="xlsx"
                  :on-success="handleExcelImportSuccess" style="display: inline-block">
         <el-button type="primary" class="ml-5">导入 <i class="el-icon-bottom"></i></el-button>
       </el-upload>
@@ -62,7 +62,7 @@
           <div style="display: flex; justify-content: center; align-items: center;">
             <el-image
                 style="width: 50px; height: 50px; border-radius:50%;"
-                :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
+                :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://puui.qpic.cn/vpic_cover/b0948da138k/b0948da138k_hz.jpg/1280'"
                 :preview-src-list="[scope.row.avatarurl]"
                 fit="cover"
             ></el-image>
@@ -181,6 +181,9 @@ export default {
       headerBg: "headerBg",
       dialogVisible: false, // 弹窗可视化
       options: [],
+
+      // 动态构建上传文件的 URL，从环境变量中获取 VUE_APP_API_BASE_URL
+      importAction: `${process.env.VUE_APP_API_BASE_URL}/user/import`,
     }
   },
   created() {
@@ -315,7 +318,9 @@ export default {
      * 导出
      * */
     exp() {
-      window.open("http://localhost:9091/user/export")
+      // 动态构建导出的 URL，从环境变量中获取 VUE_APP_API_BASE_URL
+      const exportAction = `${process.env.VUE_APP_API_BASE_URL}/user/export`;
+      window.open(exportAction);
     },
 
     /**

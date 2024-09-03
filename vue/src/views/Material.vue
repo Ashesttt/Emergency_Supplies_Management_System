@@ -129,7 +129,7 @@
         <el-form-item label="物资照片">
           <el-upload
               class="avatar-uploader"
-              action="http://localhost:9091/file/upload"
+              :action=uploadAction
               :show-file-list="true"
               :on-success="handlematerialUrlSuccess"
           >
@@ -222,6 +222,9 @@ export default {
       dialogVisible: false, // 弹窗可视化
       options_materialType: [],
       options_status: [],
+
+      // 动态构建上传文件的 URL，从环境变量中获取 VUE_APP_API_BASE_URL
+      uploadAction: `${process.env.VUE_APP_API_BASE_URL}/file/upload`,
     }
   },
   created() {

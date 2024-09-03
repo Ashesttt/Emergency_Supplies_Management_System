@@ -23,3 +23,6 @@ mybatis-plus:
 files:
   upload:
     path: ..\..\..\files\
+
+api:
+  base-url: http://localhost:9091
