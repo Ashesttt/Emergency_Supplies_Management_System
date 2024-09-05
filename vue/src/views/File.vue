@@ -240,6 +240,7 @@ export default {
         center: true
       });
       window.open(url, '_blank');
+      console.log("url:", url)
     },
     
     /**
