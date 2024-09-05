@@ -33,9 +33,14 @@ jobs:
           password: 'password'
           database: 'emergency_material_manage'
 
+      # - name: Import SQL file
+      #   run: |
+      #     mysql -u root -ppassword emergency_material_manage < emergency_material_manage.sql
+      
       - name: Import SQL file
         run: |
-          mysql -u root -ppassword emergency_material_manage < emergency_material_manage.sql
+          mysql -h 127.0.0.1 -P 3306 -u root -ppassword emergency_material_manage < Emergency_Supplies_Management_System/emergency_material_manage.sql
+
 
       - name: Copy backend config
         run: |
