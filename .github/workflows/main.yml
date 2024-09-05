@@ -37,12 +37,13 @@ jobs:
       # - name: Import SQL file
       #   run: |
       #     mysql -u root -ppassword emergency_material_manage < emergency_material_manage.sql
-      - name: Wait for MySQL to start
-        run: sleep 10  # 等待 MySQL 完全启动
+      
+      # - name: Wait for MySQL to start
+      #   run: sleep 10  # 等待 MySQL 完全启动
       
       - name: Import SQL file
         run: |
-          mysql -h 127.0.0.1 -P 3306 -u root -p 123456 emergency_material_manage < emergency_material_manage.sql
+          mysql -h 127.0.0.1 -P 3306 -u root -p 123456 emergency_material_manage < Emergency_Supplies_Management_System/emergency_material_manage.sql
 
 
       - name: Copy backend config
