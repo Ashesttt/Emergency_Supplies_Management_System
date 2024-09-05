@@ -62,7 +62,7 @@
           <div style="display: flex; justify-content: center; align-items: center;">
             <el-image
                 style="width: 50px; height: 50px; border-radius:50%;"
-                :src="scope.row.materialUrl ? scope.row.materialUrl : 'https://img2.baidu.com/it/u=1917387172,3574852173&fm=253&fmt=auto&app=120&f=JPEG?w=607&h=342'"
+                :src="scope.row.materialUrl ? scope.row.materialUrl : 'https://th.bing.com/th/id/R.7b1a08b9cad671ec7cd3f40a937cf90c?rik=bscFCAJCax1ZJg&riu=http%3a%2f%2fbpic.588ku.com%2felement_pic%2f19%2f03%2f29%2f32fd5b5d10ca51980988fedeb9ecd694.jpg&ehk=EBfBi6AGEGxpmzZ4S6BvITM75dU67ZEekiA%2bh0bxbtc%3d&risl=&pid=ImgRaw&r=0'"
                 :preview-src-list="[scope.row.materialUrl]"
                 fit="cover"
             ></el-image>

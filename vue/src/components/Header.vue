@@ -21,8 +21,8 @@
 
     <el-image
         style="width: 50px; height: 50px; border-radius:50%; margin-right: 20px; align-self: center;"
-        :src="user_info.avatarurl"
-        :preview-src-list="[user_info.avatarurl]"
+        :src="user_info.avatarurl ? user_info.avatarurl : 'https://puui.qpic.cn/vpic_cover/b0948da138k/b0948da138k_hz.jpg/1280'"
+        :preview-src-list="[user_info.avatarurl ? user_info.avatarurl : 'https://puui.qpic.cn/vpic_cover/b0948da138k/b0948da138k_hz.jpg/1280']"
         fit="cover"
     ></el-image>
 

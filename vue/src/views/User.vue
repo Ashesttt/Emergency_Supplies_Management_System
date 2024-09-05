@@ -63,7 +63,7 @@
             <el-image
                 style="width: 50px; height: 50px; border-radius:50%;"
                 :src="scope.row.avatarurl ? scope.row.avatarurl : 'https://puui.qpic.cn/vpic_cover/b0948da138k/b0948da138k_hz.jpg/1280'"
-                :preview-src-list="[scope.row.avatarurl]"
+                :preview-src-list="[scope.row.avatarurl ? scope.row.avatarurl : 'https://puui.qpic.cn/vpic_cover/b0948da138k/b0948da138k_hz.jpg/1280']"
                 fit="cover"
             ></el-image>
           </div>
