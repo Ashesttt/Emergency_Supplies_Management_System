@@ -32,6 +32,7 @@ jobs:
           username: 'root'
           password: 'password'
           database: 'emergency_material_manage'
+          port: 3306
 
       # - name: Import SQL file
       #   run: |
