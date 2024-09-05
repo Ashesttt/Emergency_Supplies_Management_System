@@ -36,7 +36,7 @@ jobs:
 
       - name: List directory contents
         run: |
-          ls -l Emergency_Supplies_Management_System/
+          ls -l
 
       # - name: Import SQL file
       #   run: |
