@@ -28,7 +28,7 @@ jobs:
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1
         with:
-          mysql-version: '5.7'
+          mysql-version: '8.0'
           username: 'root'
           password: 'password'
           database: 'emergency_material_manage'
@@ -40,6 +40,9 @@ jobs:
       - name: Import SQL file
         run: |
           mysql -h 127.0.0.1 -P 3306 -u root -ppassword emergency_material_manage < emergency_material_manage.sql
+
+      - name: Wait for MySQL to start
+        run: sleep 10  # 等待 MySQL 完全启动
 
 
       - name: Copy backend config
