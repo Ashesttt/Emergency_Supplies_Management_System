@@ -46,6 +46,8 @@ source /Emergency_Supplies_Management_System/emergency_material_manage.sql;
 
 >修改以下内容：
 >spring.datasource.password（数据库的密码）
+>
+>api.base-url(您的后端地址，即服务器公网ip+后端端口，默认是9091)
 
 ```bash
 cd Emergency_Supplies_Management_System/src/main/resources
@@ -53,9 +55,11 @@ cp application.yaml.example application.yaml
 vim application.yaml
 ```
 
-4.编辑环境文件，换成您服务器的外网ip和后端的端口
+4.编辑环境文件，换成您的服务器公网ip+后端端口，默认是9091
 
 >VUE_APP_API_BASE_URL
+>
+>其中上边的api.base-url和这个一样
 
 ```bash
 vim Emergency_Supplies_Management_System/vue/.env
