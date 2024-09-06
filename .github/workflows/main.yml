@@ -25,15 +25,25 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
           
-      - name: Azure MYSQL Deploy
-        uses: Azure/mysql@v1
+      - name: MySQL Deploy Action
+        # You may pin to the exact commit or the version.
+        # uses: calxus/mysql-deploy-action@54af3465f56d1b95c27c520f3b84693b3646ab0b
+        uses: calxus/mysql-deploy-action@v2
         with:
-          server-name: localhost
-          port: 3306
-          username: root
-          password: 123456
-          database: emergency_material_manage
-          sql-file: emergency_material_manage.sql
+          # Hostname used to connect to database
+          DATABASE_HOST: localhost
+          # Port used to connect to database
+          DATABASE_PORT: 3306
+          # Name of database to connect to
+          DATABASE_NAME: emergency_material_manage
+          # Username used to connect to database
+          DATABASE_USERNAME: root
+          # Password used to connect to database
+          DATABASE_PASSWORD: 123456
+          # Script run on database
+          DATABASE_SCRIPT: source emergency_material_manage.sql
+          
+          
       
       # - name: Set up MySQL
       #   uses: mirromutth/mysql-action@v1
