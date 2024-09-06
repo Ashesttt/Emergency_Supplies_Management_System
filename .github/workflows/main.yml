@@ -28,7 +28,8 @@ jobs:
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1
         with:
-          mysql-version: '8.0'
+          mysql-version: '8.0.36'
+          MYSQL_HOST: localhost
           username: 'root'
           password: '123456'
           database: 'emergency_material_manage'
