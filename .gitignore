@@ -37,3 +37,6 @@ application.yaml
 
 #整个files文件夹
 files/**
+
+#.env文件
+.env
