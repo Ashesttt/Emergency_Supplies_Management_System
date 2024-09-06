@@ -41,7 +41,7 @@ jobs:
           # Password used to connect to database
           DATABASE_PASSWORD: 123456
           # Script run on database
-          DATABASE_SCRIPT: source emergency_material_manage.sql
+          DATABASE_SCRIPT: emergency_material_manage.sql
           
           
       
