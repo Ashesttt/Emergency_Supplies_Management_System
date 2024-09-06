@@ -42,6 +42,9 @@ jobs:
           DATABASE_PASSWORD: 123456
           # Script run on database
           DATABASE_SCRIPT: emergency_material_manage.sql
+
+      - name: Wait for MySQL to start
+        run: sleep 10  # 等待 MySQL 完全启动
           
           
       
