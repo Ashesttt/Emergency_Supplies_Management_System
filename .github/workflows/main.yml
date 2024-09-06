@@ -24,31 +24,37 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '11'
-      
-      - name: Set up MySQL
-        uses: mirromutth/mysql-action@v1
+          
+      - name: Azure MYSQL Deploy
+        uses: Azure/mysql@v1
         with:
-          mysql-version: '8.0.36'
-          MYSQL_HOST: localhost
-          username: 'root'
-          password: '123456'
-          database: 'emergency_material_manage'
+          server-name: localhost
           port: 3306
-
-      - name: List directory contents
-        run: |
-          ls -l
+          username: root
+          password: 123456
+          database: emergency_material_manage
+          sql-file: emergency_material_manage.sql
+      
+      # - name: Set up MySQL
+      #   uses: mirromutth/mysql-action@v1
+      #   with:
+      #     mysql-version: '8.0.36'
+      #     MYSQL_HOST: localhost
+      #     username: 'root'
+      #     password: '123456'
+      #     database: 'emergency_material_manage'
+      #     port: 3306
 
       # - name: Import SQL file
       #   run: |
       #     mysql -u root -ppassword emergency_material_manage < emergency_material_manage.sql
       
-      - name: Wait for MySQL to start
-        run: sleep 10  # 等待 MySQL 完全启动
+      # - name: Wait for MySQL to start
+      #   run: sleep 10  # 等待 MySQL 完全启动
       
-      - name: Import SQL file
-        run: |
-          mysql -h 127.0.0.1 -P 3306 -u root -p123456 emergency_material_manage < emergency_material_manage.sql
+      # - name: Import SQL file
+      #   run: |
+      #     mysql -h 127.0.0.1 -P 3306 -u root -p123456 emergency_material_manage < emergency_material_manage.sql
 
 
       - name: Copy backend config
