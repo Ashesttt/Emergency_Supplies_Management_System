@@ -39,4 +39,4 @@ application.yaml
 files/**
 
 #.env文件
-.env
+vue/.env
