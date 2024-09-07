@@ -1,7 +1,10 @@
-# 应急救援装备管理系统教程
+# 应急救援装备管理系统
+<div align="center">
+[![GitHub Release](https://img.shields.io/github/v/release/Ashesttt/Emergency_Supplies_Management_System)](https://img.shields.io/github/v/release/Ashesttt/Emergency_Supplies_Management_System)
+[![GitHub License](https://img.shields.io/github/license/Ashesttt/Emergency_Supplies_Management_System)](https://img.shields.io/github/license/Ashesttt/Emergency_Supplies_Management_System)
 
-本教程将指导您如何设置和运行应急救援装备管理系统。
-
+![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
+</div>
 
 ## 介绍
 
@@ -23,7 +26,7 @@
 
 ## 快速开始
 
-**Emergency_Supplies_Management_System **支持 [Docker Compose 部署](#docker-compose-部署)、[本地部署](./docs/development.md#本地部署)
+**Emergency_Supplies_Management_System**  支持  [Docker Compose 部署](#docker-compose-部署)、[本地部署](./docs/development.md#本地部署)
 
 > [!TIP]
 > 推荐使用 Docker-compose 部署。
