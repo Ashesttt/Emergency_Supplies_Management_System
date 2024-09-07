@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0.36
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword  # 替换为实际的数据库密码
+      MYSQL_DATABASE: emergency_material_manage
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./emergency_material_manage.sql:/docker-entrypoint-initdb.d/emergency_material_manage.sql
+    networks:
+      - app-network
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+    container_name: backend
+    depends_on:
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/emergency_material_manage
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: rootpassword
+      API_BASE_URL: http://localhost:9091
+    ports:
+      - "9091:9091"
+    networks:
+      - app-network
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend
+    ports:
+      - "80:80"  # 映射到宿主机的80端口
+    environment:
+      VUE_APP_API_BASE_URL: http://localhost:9091
+    networks:
+      - app-network
+
+volumes:
+  mysql-data:
+
+networks:
+  app-network:
+    driver: bridge
