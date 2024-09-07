@@ -17,6 +17,8 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
+CREATE DATABASE IF NOT EXISTS emergency_material_manage;
+USE emergency_material_manage;
 -- ----------------------------
 -- Table structure for apply_info
 -- ----------------------------
