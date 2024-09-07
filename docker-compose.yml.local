@@ -16,7 +16,9 @@ services:
       - app-network
 
   backend:
-    image: jerryestt/backend-image:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
     container_name: backend
     depends_on:
       - mysql
@@ -31,7 +33,9 @@ services:
       - app-network
 
   frontend:
-    image: jerryestt/frontend-image:latest
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
     container_name: frontend
     ports:
       - "80:80"  # 映射到宿主机的80端口
