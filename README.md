@@ -29,7 +29,7 @@
 
 ## 🚀 快速开始
 
-**Emergency_Supplies_Management_System** 支持  [🐳 Docker Compose 部署](#docker-compose-部署) 和 [📄 本地部署](./docs/development.md#本地部署)
+**Emergency_Supplies_Management_System** 支持  [🐳 Docker Compose 部署](#-docker-compose-部署) 和 [📄 本地部署](./docs/development.md#本地部署)
 
 > [!TIP]
 > 推荐使用 Docker-compose 部署。
