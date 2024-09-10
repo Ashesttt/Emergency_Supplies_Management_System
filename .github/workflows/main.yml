@@ -43,7 +43,9 @@ jobs:
 
       - name: Import SQL file
         run: |
-          mysql -uroot -p root emergency_material_manage < emergency_material_manage.sql
+          mysql -uroot -p root
+          show databases;
+          # mysql -uroot -p root emergency_material_manage < emergency_material_manage.sql
 
 
 
