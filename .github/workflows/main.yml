@@ -29,18 +29,24 @@ jobs:
 
 
 
-      - name: Set up MySQL
-        uses: mirromutth/mysql-action@v1
-        with:
-          mysql-version: '8.0.36'
-          MYSQL_HOST: localhost
-          username: 'root'
-          password: '123456'
-          database: 'emergency_material_manage'
-          port: 3306
+      # - name: Set up MySQL
+      #   uses: mirromutth/mysql-action@v1
+      #   with:
+      #     mysql-version: '8.0.36'
+      #     MYSQL_HOST: localhost
+      #     username: 'root'
+      #     password: '123456'
+      #     database: 'emergency_material_manage'
+      #     port: 3306
       
       # - name: Wait for MySQL to start
       #   run: sleep 10  # 等待 MySQL 完全启动
+      
+      - name: Install MySQL Server
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y mysql-server
+          sudo service mysql start
 
       - name: Set up MySQL user and database
         run: |
