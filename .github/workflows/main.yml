@@ -23,31 +23,12 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: '11.0.24'
-          
-      # - name: MySQL Deploy Action
-      #   # You may pin to the exact commit or the version.
-      #   # uses: calxus/mysql-deploy-action@54af3465f56d1b95c27c520f3b84693b3646ab0b
-      #   uses: calxus/mysql-deploy-action@v2
-      #   with:
-      #     # Hostname used to connect to database
-      #     DATABASE_HOST: localhost
-      #     # Port used to connect to database
-      #     DATABASE_PORT: 3306
-      #     # Name of database to connect to
-      #     DATABASE_NAME: emergency_material_manage
-      #     # Username used to connect to database
-      #     DATABASE_USERNAME: root
-      #     # Password used to connect to database
-      #     DATABASE_PASSWORD: 123456
-      #     # Script run on database
-      #     DATABASE_SCRIPT: emergency_material_manage.sql
+          java-version: '11.0.24'       
 
-      # - name: Wait for MySQL to start
-      #   run: sleep 10  # 等待 MySQL 完全启动
-          
-          
-      
+
+
+
+
       - name: Set up MySQL
         uses: mirromutth/mysql-action@v1
         with:
@@ -58,8 +39,15 @@ jobs:
           database: 'emergency_material_manage'
           port: 3306
       
-      - name: Wait for MySQL to start
-        run: sleep 10  # 等待 MySQL 完全启动
+      # - name: Wait for MySQL to start
+      #   run: sleep 10  # 等待 MySQL 完全启动
+
+      - name: Set up MySQL user and database
+        run: |
+          sudo mysql -e "CREATE DATABASE IF NOT EXISTS emergency_material_manage;"
+          sudo mysql -e "CREATE USER IF NOT EXISTS 'root'@'localhost' IDENTIFIED BY '123456';"
+          sudo mysql -e "GRANT ALL PRIVILEGES ON emergency_material_manage.* TO 'root'@'localhost';"
+          sudo mysql -e "FLUSH PRIVILEGES;"
       
       - name: Import SQL file
         run: |
