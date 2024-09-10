@@ -25,49 +25,45 @@ jobs:
           distribution: 'temurin'
           java-version: '11.0.24'
           
-      - name: MySQL Deploy Action
-        # You may pin to the exact commit or the version.
-        # uses: calxus/mysql-deploy-action@54af3465f56d1b95c27c520f3b84693b3646ab0b
-        uses: calxus/mysql-deploy-action@v2
-        with:
-          # Hostname used to connect to database
-          DATABASE_HOST: localhost
-          # Port used to connect to database
-          DATABASE_PORT: 3306
-          # Name of database to connect to
-          DATABASE_NAME: emergency_material_manage
-          # Username used to connect to database
-          DATABASE_USERNAME: root
-          # Password used to connect to database
-          DATABASE_PASSWORD: 123456
-          # Script run on database
-          DATABASE_SCRIPT: emergency_material_manage.sql
-
-      - name: Wait for MySQL to start
-        run: sleep 10  # 等待 MySQL 完全启动
-          
-          
-      
-      # - name: Set up MySQL
-      #   uses: mirromutth/mysql-action@v1
+      # - name: MySQL Deploy Action
+      #   # You may pin to the exact commit or the version.
+      #   # uses: calxus/mysql-deploy-action@54af3465f56d1b95c27c520f3b84693b3646ab0b
+      #   uses: calxus/mysql-deploy-action@v2
       #   with:
-      #     mysql-version: '8.0.36'
-      #     MYSQL_HOST: localhost
-      #     username: 'root'
-      #     password: '123456'
-      #     database: 'emergency_material_manage'
-      #     port: 3306
+      #     # Hostname used to connect to database
+      #     DATABASE_HOST: localhost
+      #     # Port used to connect to database
+      #     DATABASE_PORT: 3306
+      #     # Name of database to connect to
+      #     DATABASE_NAME: emergency_material_manage
+      #     # Username used to connect to database
+      #     DATABASE_USERNAME: root
+      #     # Password used to connect to database
+      #     DATABASE_PASSWORD: 123456
+      #     # Script run on database
+      #     DATABASE_SCRIPT: emergency_material_manage.sql
 
-      # - name: Import SQL file
-      #   run: |
-      #     mysql -u root -ppassword emergency_material_manage < emergency_material_manage.sql
-      
       # - name: Wait for MySQL to start
       #   run: sleep 10  # 等待 MySQL 完全启动
+          
+          
       
-      # - name: Import SQL file
-      #   run: |
-      #     mysql -h 127.0.0.1 -P 3306 -u root -p123456 emergency_material_manage < emergency_material_manage.sql
+      - name: Set up MySQL
+        uses: mirromutth/mysql-action@v1
+        with:
+          mysql-version: '8.0.36'
+          MYSQL_HOST: localhost
+          username: 'root'
+          password: '123456'
+          database: 'emergency_material_manage'
+          port: 3306
+      
+      - name: Wait for MySQL to start
+        run: sleep 10  # 等待 MySQL 完全启动
+      
+      - name: Import SQL file
+        run: |
+          mysql -h 127.0.0.1 -P 3306 -u root -p123456 emergency_material_manage < emergency_material_manage.sql
 
 
       - name: Copy backend config
