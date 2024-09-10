@@ -45,6 +45,13 @@ jobs:
           sudo apt-get install -y mysql-server
           sudo service mysql start
 
+
+      - name: Set up MySQL user and database
+        run: |
+          # 使用 root 用户不带密码登录并修改 root 密码
+          sudo mysql -e "ALTER USER 'root'@'
+
+
       - name: Secure MySQL Installation and Set Root Password
         run: |
           sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY '123456';"
