@@ -45,11 +45,10 @@ jobs:
           sudo apt-get install -y mysql-server
           sudo service mysql start
 
-      - name: Configure MySQL Root User
+      - name: Secure MySQL Installation and Set Root Password
         run: |
-          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED BY '123456';"
-          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY '123456';"
-          sudo mysql -e "FLUSH PRIVILEGES;"
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY '123456';"
+          sudo mysql -u root -p123456 -e "FLUSH PRIVILEGES;"
 
       - name: Set up MySQL user and database
         run: |
@@ -60,6 +59,7 @@ jobs:
       - name: Import SQL file
         run: |
           mysql -u root -p123456 emergency_material_manage < emergency_material_manage.sql
+
 
 
 
