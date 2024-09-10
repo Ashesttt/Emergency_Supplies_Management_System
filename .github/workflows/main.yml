@@ -43,9 +43,10 @@ jobs:
 
       - name: Import SQL file
         run: |
+          sudo systemctl status mysql 
           mysql -uroot -p root
           show databases;
-          # mysql -uroot -p root emergency_material_manage < emergency_material_manage.sql
+          
 
 
 
