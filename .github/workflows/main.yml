@@ -43,6 +43,7 @@ jobs:
 
       - name: Import SQL file
         run: |
+          sudo service mysql start
           sudo systemctl status mysql 
           mysql -uroot -p root
           show databases;
