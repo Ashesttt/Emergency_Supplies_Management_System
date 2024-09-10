@@ -25,10 +25,6 @@ jobs:
           distribution: 'temurin'
           java-version: '11.0.24'       
 
-
-
-
-
       # - name: Set up MySQL
       #   uses: mirromutth/mysql-action@v1
       #   with:
@@ -41,13 +37,20 @@ jobs:
       
       # - name: Wait for MySQL to start
       #   run: sleep 10  # 等待 MySQL 完全启动
+
       
       - name: Install MySQL Server
         run: |
           sudo apt-get update
           sudo apt-get install -y mysql-server
           sudo service mysql start
-
+          
+      - name: Secure MySQL Installation
+        # 设置 root 用户的密码，并禁用空密码登录
+        run: |
+          sudo mysql -e "ALTER USER 'root'@'localhost' IDENTIFIED WITH 'mysql_native_password' BY '123456';"
+          sudo mysql -e "FLUSH PRIVILEGES;"
+          
       - name: Set up MySQL user and database
         run: |
           sudo mysql -e "CREATE DATABASE IF NOT EXISTS emergency_material_manage;"
