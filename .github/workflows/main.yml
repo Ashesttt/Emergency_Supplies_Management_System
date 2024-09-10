@@ -42,7 +42,7 @@ jobs:
       - name: Install MySQL Server
         run: |
           sudo apt-get update
-          sudo apt-get install -y mysql-server-8.0.36
+          sudo apt-get install -y mysql-server-8.0
           sudo service mysql start
           sudo systemctl status mysql
           
