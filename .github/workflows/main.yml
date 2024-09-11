@@ -37,19 +37,20 @@ jobs:
       #     mysql -uroot -p
       #     show databases;
       
-      - uses: actions/checkout@v4
-      - uses: shogo82148/actions-setup-mysql@v1
+      - uses: samin/mysql-action@v1
         with:
-          mysql-version: "8.0"
-      - run: mysql -uroot -e 'SELECT version()'
+          mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
+          mysql database: 'emergency_material_manage' # Optional, default value is "test". The specified database which will be create
+          # mysql root password: ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
+          # mysql user: 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Of course you can use secrets, too
+          # mysql password: ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
 
-
-      - name: Import SQL file
-        run: |
-          sudo service mysql start
-          # sudo systemctl status mysql 
-          # mysql -uroot -p root
-          # show databases;
+      # - name: Import SQL file
+      #   run: |
+      #     # sudo service mysql start
+      #     # sudo systemctl status mysql 
+      #     # mysql -uroot -p root
+      #     # show databases;
           
 
 
