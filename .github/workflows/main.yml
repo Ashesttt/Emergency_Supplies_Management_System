@@ -26,22 +26,43 @@ jobs:
           java-version: '11.0.24'       
 
       
+      # - id: setup-mysql
+      #   uses: shogo82148/actions-setup-mysql@v1
+      #   with:
+      #     mysql-version: "8.0"
+
+      # - name: connect via unix domain socket
+      #   run: mysql -uroot \
+      #     --protocol=SOCKET \
+      #     --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock
+      #     -e 'SELECT version()'
+          
+      # - name: Import SQL file
+      #   run: |
+      #     mysql -uroot emergency_material_manage < emergency_material_manage.sql
+          
       - id: setup-mysql
         uses: shogo82148/actions-setup-mysql@v1
         with:
           mysql-version: "8.0"
 
-      - name: connect via unix domain socket
-        run: mysql -uroot \
+      - name: Connect via Unix domain socket
+        run: |
+          mysql -uroot \
           --protocol=SOCKET \
-          --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock
-          -e 'SELECT version()'
-          
+          --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock \
+          -e 'SELECT version();'
+
       - name: Import SQL file
         run: |
-          mysql -uroot emergency_material_manage < emergency_material_manage.sql
-          
-
+          mysql -uroot \
+          --protocol=SOCKET \
+          --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock \
+          -e "CREATE DATABASE IF NOT EXISTS emergency_material_manage;"
+          mysql -uroot \
+          --protocol=SOCKET \
+          --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock \
+          emergency_material_manage < emergency_material_manage.sql
 
 
 
