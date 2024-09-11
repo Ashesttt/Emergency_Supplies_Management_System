@@ -25,30 +25,21 @@ jobs:
           distribution: 'temurin'
           java-version: '11.0.24'       
 
-      # - name: Install MySQL Server
-      #   run: |
-      #     sudo apt-get update
-      #     sudo apt-get install -y mysql-server-8.0
-      #     sudo service mysql start
-      #     sudo systemctl status mysql # 成功
-
-      # - name:  getin MySQL Server
-      #   run: |
-      #     mysql -uroot -p
-      #     show databases;
       
-      - uses: samin/mysql-action@v1
+      - id: setup-mysql
+        uses: shogo82148/actions-setup-mysql@v1
         with:
-          mysql version: '8.0' # Optional, default value is "latest". The version of the MySQL
-          mysql database: 'emergency_material_manage' # Optional, default value is "test". The specified database which will be create
-          mysql root password: ${{ secrets.RootPassword }} # Required if "mysql user" is empty, default is empty. The root superuser password
-          mysql user: 'developer' # Required if "mysql root password" is empty, default is empty. The superuser for the specified database. Of course you can use secrets, too
-          mysql password: ${{ secrets.DatabasePassword }} # Required if "mysql user" exists. The password for the "mysql user"
+          mysql-version: "8.0"
+
+      - name: connect via unix domain socket
+        run: mysql -uroot \
+          --protocol=SOCKET \
+          --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock
+          -e 'SELECT version()'
           
       - name: Import SQL file
         run: |
-
-          show databases;
+          mysql -uroot emergency_material_manage < emergency_material_manage.sql
           
 
 
