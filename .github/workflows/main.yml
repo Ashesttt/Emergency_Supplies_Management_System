@@ -47,6 +47,11 @@ jobs:
           emergency_material_manage < emergency_material_manage.sql
 
 
+      - name: List files for debugging
+        run: |
+          ls -al src/main/resources/
+
+
       - name: Copy backend config
         run: |
           cp Emergency_Supplies_Management_System/src/main/resources/application.yaml.example Emergency_Supplies_Management_System/src/main/resources/application.yaml
