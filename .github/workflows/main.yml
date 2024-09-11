@@ -37,16 +37,19 @@ jobs:
       #     mysql -uroot -p
       #     show databases;
       
-      - name: Setup MySql
-        uses: nnhy/mysql-action@v1.0
+      - uses: actions/checkout@v4
+      - uses: shogo82148/actions-setup-mysql@v1
+        with:
+          mysql-version: "8.0"
+      - run: mysql -uroot -e 'SELECT version()'
 
 
       - name: Import SQL file
         run: |
           sudo service mysql start
-          sudo systemctl status mysql 
-          mysql -uroot -p root
-          show databases;
+          # sudo systemctl status mysql 
+          # mysql -uroot -p root
+          # show databases;
           
 
 
