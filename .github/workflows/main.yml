@@ -49,18 +49,15 @@ jobs:
       - name: Connect via Unix domain socket
         run: |
           mysql -uroot \
-          --protocol=SOCKET \
           --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock \
           -e 'SELECT version();'
 
       - name: Import SQL file
         run: |
           mysql -uroot \
-          --protocol=SOCKET \
           --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock \
           -e "CREATE DATABASE IF NOT EXISTS emergency_material_manage;"
           mysql -uroot \
-          --protocol=SOCKET \
           --socket=${{ steps.setup-mysql.outputs.base-dir }}/tmp/mysql.sock \
           emergency_material_manage < emergency_material_manage.sql
 
