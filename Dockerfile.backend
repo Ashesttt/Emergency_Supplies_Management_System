@@ -1,7 +1,4 @@
-# 使用更小的基础镜像
-FROM eclipse-temurin:11-jre-alpine
+FROM openjdk:11-jre-slim
 WORKDIR /app
-# 复制Spring Boot应用程序
 COPY target/SpringBoot-0.0.1-SNAPSHOT.jar /app/app.jar
-# 运行应用程序
 CMD ["java", "-jar", "/app/app.jar"]
