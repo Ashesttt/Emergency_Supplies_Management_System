@@ -28,7 +28,7 @@ cp application.yaml.example application.yaml
 vim application.yaml
 ```
 
-4. 编辑环境文件，编辑VUE_APP_API_BASE_URL，换成您的服务器公网ip+后端端口
+4. 编辑环境文件，编辑`VUE_APP_API_BASE_URL`，换成您的服务器公网ip+后端端口，并把它从Git 的缓存中删除 `.env` 文件
 
 >默认是：
 >
