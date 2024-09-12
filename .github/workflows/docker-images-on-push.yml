@@ -41,6 +41,11 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
 
+    - name: Copy backend config
+      run: |
+        cp src/main/resources/application.yaml.example src/main/resources/application.yaml
+        sed -i 's/<YOUR_DB_PASSWORD>/password/' src/main/resources/application.yaml
+
     - name: Build backend
       run: |
         mvn -X clean install
