@@ -3,10 +3,9 @@ name: Build and Push Docker Image On Push
 on:
   push:
     branches:
-      - Emergency_Material_Manage_System
+      - master
 
 jobs:
-
   build:
 
     runs-on: ubuntu-latest
@@ -31,14 +30,23 @@ jobs:
       uses: actions/setup-java@v3
       with:
         distribution: 'temurin'
-        java-version: '11.0.24'      
-        
+        java-version: '11.0.24'
+      
+    # 缓存 Maven 依赖以加快构建速度
+    - name: Cache Maven packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2/repository
+        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+        restore-keys: |
+          ${{ runner.os }}-maven-
+
     - name: Build backend
       run: |
         mvn -X clean install
         mvn package
-        
-    # Step 6: 构建并推送后端 Docker 镜像
+
+    # 构建并推送后端 Docker 镜像
     - name: Build and push backend Docker image
       uses: docker/build-push-action@v5.2.0
       with:
@@ -46,9 +54,20 @@ jobs:
         file: Dockerfile.backend  # 后端的 Dockerfile
         platforms: linux/amd64,linux/arm64  # 支持的架构
         push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/backend-image:latest  # Docker Hub 上的镜像标签
 
-    # Step 5: 构建并推送前端 Docker 镜像
+    # 缓存 Node.js 依赖以加快构建速度
+    - name: Cache Node.js modules
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    # 构建并推送前端 Docker 镜像
     - name: Build and push frontend Docker image
       uses: docker/build-push-action@v5.2.0
       with:
@@ -56,4 +75,6 @@ jobs:
         file: Dockerfile.frontend  # 前端的 Dockerfile
         platforms: linux/amd64,linux/arm64  # 支持的架构
         push: true
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-image:latest  # Docker Hub 上的镜像标签
