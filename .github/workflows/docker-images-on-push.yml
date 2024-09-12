@@ -3,7 +3,7 @@ name: Build and Push Docker Image On Push
 on:
   push:
     branches:
-      - master
+      - Emergency_Material_Manage_System
 
 jobs:
 
@@ -27,16 +27,17 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}  # 使用 GitHub Secrets 来存储 Docker Hub 用户名
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}  # 使用 GitHub Secrets 来存储 Docker Hub 访问令牌
 
-    # Step 5: 构建并推送前端 Docker 镜像
-    - name: Build and push frontend Docker image
-      uses: docker/build-push-action@v5.2.0
+    - name: Set up Java
+      uses: actions/setup-java@v3
       with:
-        context: ./  # Docker 上下文，项目根目录
-        file: Dockerfile.frontend  # 前端的 Dockerfile
-        platforms: linux/amd64,linux/arm64  # 支持的架构
-        push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-image:latest  # Docker Hub 上的镜像标签
-
+        distribution: 'temurin'
+        java-version: '11.0.24'      
+        
+    - name: Build backend
+      run: |
+        mvn -X clean install
+        mvn package
+        
     # Step 6: 构建并推送后端 Docker 镜像
     - name: Build and push backend Docker image
       uses: docker/build-push-action@v5.2.0
@@ -46,3 +47,13 @@ jobs:
         platforms: linux/amd64,linux/arm64  # 支持的架构
         push: true
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/backend-image:latest  # Docker Hub 上的镜像标签
+
+    # Step 5: 构建并推送前端 Docker 镜像
+    - name: Build and push frontend Docker image
+      uses: docker/build-push-action@v5.2.0
+      with:
+        context: ./  # Docker 上下文，项目根目录
+        file: Dockerfile.frontend  # 前端的 Dockerfile
+        platforms: linux/amd64,linux/arm64  # 支持的架构
+        push: true
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/frontend-image:latest  # Docker Hub 上的镜像标签
