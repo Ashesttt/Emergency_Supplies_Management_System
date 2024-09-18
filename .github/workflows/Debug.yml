@@ -1,0 +1,18 @@
+name: Debug Workflow
+
+on:
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check release tag
+        run: echo "Release tag:${{ github.event.release.tag_name }}"
+
+      # Debug any other variables you want to check
+      - name: Debug event payload
+        run: echo "${{ toJson(github.event) }}"
