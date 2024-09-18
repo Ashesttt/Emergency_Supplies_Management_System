@@ -64,13 +64,13 @@ jobs:
         tags: ${{ secrets.DOCKER_HUB_USERNAME }}/backend-image:latest  # Docker Hub 上的镜像标签
 
     # 缓存 Node.js 依赖以加快构建速度
-    - name: Cache Node.js modules
-      uses: actions/cache@v3
-      with:
-        path: ~/.npm
-        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-node-
+    # - name: Cache Node.js modules
+    #   uses: actions/cache@v3
+    #   with:
+    #     path: ~/.npm
+    #     key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+    #     restore-keys: |
+    #       ${{ runner.os }}-node-
 
     # 构建并推送前端 Docker 镜像
     - name: Build and push frontend Docker image
