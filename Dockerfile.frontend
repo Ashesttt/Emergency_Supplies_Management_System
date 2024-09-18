@@ -2,10 +2,16 @@ FROM node:16.19 AS build
 
 WORKDIR /app
 
+# 接收构建时的 API_BASE_URL 参数
+ARG VUE_APP_API_BASE_URL
+ENV VUE_APP_API_BASE_URL=${VUE_APP_API_BASE_URL}
+
 COPY vue/package*.json ./
 RUN npm install
 COPY vue/ ./
-RUN npm run build
+
+# 使用传入的环境变量进行构建
+RUN VUE_APP_API_BASE_URL=$VUE_APP_API_BASE_URL npm run build
 
 # 运行阶段
 FROM nginx:alpine
