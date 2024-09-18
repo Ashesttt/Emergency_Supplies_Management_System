@@ -1,0 +1,12 @@
+name: Release Workflow
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  check-tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check release tag
+        run: echo "Release tag:${{ github.event.release.tag_name }}"
