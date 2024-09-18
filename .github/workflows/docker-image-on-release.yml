@@ -51,6 +51,9 @@ jobs:
         mvn -X clean install
         mvn package
 
+    - name: Check release tag
+      run: echo "Release tag:${{ github.event.release.tag_name }}"
+
     # 构建并推送后端 Docker 镜像
     - name: Build and push backend Docker image
       uses: docker/build-push-action@v5.2.0
