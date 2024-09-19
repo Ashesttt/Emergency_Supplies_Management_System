@@ -4,6 +4,11 @@ WORKDIR /app
 
 COPY vue/package*.json ./
 RUN npm install
+
+# 在复制源代码之前，创建 /vue/.env 文件并设置环境变量
+RUN mkdir -p /app/vue
+RUN echo "VUE_APP_API_BASE_URL=http://localhost:9091" > /app/vue/.env
+
 COPY vue/ ./
 RUN npm run build
 
